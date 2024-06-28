@@ -1,0 +1,140 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Entrance Quiz - Registration</title>
+  <link rel="icon" href="{% static 'logo/favicon.ico' %}" type="image/x-icon">
+  <link rel="apple-touch-icon" href="{% static 'logo/favicon.ico' %}">
+  <!-- Simple bar CSS -->
+  <link rel="stylesheet" href="{% static 'user/css/simplebar.css' %}">
+  <!-- Fonts CSS -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100;0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <!-- Icons CSS -->
+  <link rel="stylesheet" href="{% static 'user/css/feather.css' %}">
+  <!-- Date Range Picker CSS -->
+  <link rel="stylesheet" href="{% static 'user/css/daterangepicker.css' %}">
+  <!-- App CSS -->
+  <link rel="stylesheet" href="{% static 'user/css/app-light.css' %}" id="lightTheme">
+  <link rel="stylesheet" href="{% static 'user/css/app-dark.css' %}" id="darkTheme" disabled>
+</head>
+
+<body class="light ">
+  <div class="wrapper vh-100">
+    <div class="row align-items-center h-100">
+      <form class="col-lg-6 col-md-8 col-10 mx-auto" method="POST" action="{% url 'account:register' %}">
+        {% csrf_token %}
+        <div class="mx-auto text-center my-4">
+          <a class="navbar-brand mx-auto flex-fill text-center" href="{% url 'core:index' %}">
+            <img src="{% static 'logo/logo.png' %}" alt="" srcset="" style="width: 280px;">
+          </a>
+          <h2 class="my-3">Register</h2>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required class="form-control">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required class="form-control">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="firstname">Firstname</label>
+            <input type="text" id="firstname" name="first_name"  class="form-control">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="lastname">Lastname</label>
+            <input type="text" id="lastname" name="last_name"  class="form-control">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="custom-select">Select Course</label>
+            <select class="custom-select" id="custom-select" name="course">
+              {% for course in courses %}
+                <option value="{{course.id}}">{{course.name}}</option>
+              {% endfor %}
+            </select>
+          </div> 
+          <div class="form-group col-md-6">
+            <label for="lastname">Message</label>
+            <textarea name="message" class="form-control"  id="" cols="30" rows="5"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="custom-select">Gender</label>
+            <select class="custom-select" id="custom-select" name="gender">
+              <option value="">Select Gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+              <option value="O">Others</option>
+            </select>
+          </div> 
+        </div>
+        <hr class="my-4">
+        <div class="row mb-4">
+            <div class="form-group col-md-6">
+              <label for="inputPassword5">New Password</label>
+              <input type="password" class="form-control"  name="password1" id="inputPassword5">
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputPassword6">Confirm Password</label>
+              <input type="password" name="password2"  class="form-control" id="inputPassword6">
+            </div>
+          {% if messages %}
+          <div class="col-md-12 mt-2">
+            <p class="mb-2">Please Fill The Requirements</p>
+            <ul class="small text-muted pl-4 mb-0">
+              {% for message in messages %}
+              <li class="alert alert-danger"> {{ message }} </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+        <button class="btn btn-lg btn-block text-light" style="background-color: #6879BB;" type="submit">Sign up</button>
+        <div class="form-group text-center mt-3 mb-3">
+          <label> <a href="{% url 'account:login' %}" class="text-dark">Already have account?</a> </label>
+        </div>
+        <a href="{% url 'core:home' %}" class="btn btn-dark btn-block">Back to home</a>
+
+      </form>
+    </div>
+  </div>
+  <script src="{% static 'user/js/jquery.min.js' %}"></script>
+  <script src="{% static 'user/js/popper.min.js' %}"></script>
+  <script src="{% static 'user/js/moment.min.js' %}"></script>
+  <script src="{% static 'user/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'user/js/simplebar.min.js' %}"></script>
+  <script src="{% static 'user/js/daterangepicker.js' %}""></script>
+    <script src=" {% static 'user/js/jquery.stickOnScroll.js' %}""></script>
+  <script src="{% static 'user/js/tinycolor-min.js' %}"></script>
+  <script src="{% static 'user/js/config.js' %}"></script>
+  <script src="{% static 'user/js/apps.js' %}"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-56159088-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'UA-56159088-1');
+  </script>
+</body>
+
+</html>
+</body>
+
+</html>

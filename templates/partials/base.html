@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <title>Entrance Quiz -  {% block title %}{% endblock %}</title>
+
+    <link rel="icon" href="{% static 'logo/favicon.ico' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{% static 'logo/favicon.ico' %}">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'landing_page/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'landing_page/assets/css/templatemo-chain-app-dev.css' %}">
+    <link rel="stylesheet" href="{% static 'landing_page/assets/css/animated.css' %}">
+    <link rel="stylesheet" href="{% static 'landing_page/assets/css/owl.css' %}">
+
+  </head>
+
+<body>
+
+  <!-- ***** Preloader Start ***** -->
+  <div id="js-preloader" class="js-preloader">
+    <div class="preloader-inner">
+      <span class="dot"></span>
+      <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+  <!-- ***** Preloader End ***** -->
+
+  <!-- ***** Header Area Start ***** -->
+  {% include 'partials/header.html' %}
+  
+  <!-- ***** Header Area End ***** -->
+
+</div>
+
+    {% block content %}{% endblock %} 
+  
+    {% include 'partials/footer.html' %}
+
+
+  <!-- Scripts -->
+  <script src="{% static 'landing_page/vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'landing_page/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'landing_page/assets/js/owl-carousel.js' %}"></script>
+  <script src="{% static 'landing_page/assets/js/animation.js' %}"></script>
+  <script src="{% static 'landing_page/assets/js/imagesloaded.js' %}"></script>
+  <script src="{% static 'landing_page/assets/js/popup.js' %}"></script>
+  <script src="{% static 'landing_page/assets/js/custom.js' %}"></script>
+</body>
+</html>

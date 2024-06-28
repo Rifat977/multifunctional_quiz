@@ -1,0 +1,261 @@
+{% extends 'user/assets/base.html' %}
+
+{% block title %}Quiz Participation{% endblock %}
+
+{% block stylesheet %} 
+<style>
+    .active {
+        background-color: lightgreen !important;
+    }
+    .selected {
+        background-color: #e0ffe0;
+    }
+    .nav-link {
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+    }
+    .card {
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .card-body {
+        padding: 20px;
+    }
+    .drag-drop-zone {
+        border: 2px dashed #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 10px;
+        text-align: center;
+        min-height: 50px;
+        margin-bottom: 10px;
+    }
+    .drag-drop-zone.drag-over {
+        border-color: #33d17a;
+    }
+    .option-label {
+        display: inline-block;
+        margin: 5px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-12 text-center">
+                    <h2 class="page-title">Demo Quiz</h2>
+                    <p>Tier: <span class="text-success">DEMO</span></p>
+                    <p>Point For Each Correct Answer: 1</p>
+                </div>
+                <ul class="nav flex-column nav-pills" id="questionTab" role="tablist">
+                    <div class="row justify-content-center text-center">
+                        <div class="col-2">
+                            <li class="nav-item">
+                                <a style="padding: 3px; background-color: rgba(144,238,144,0.5); color: #1a6342; border: 1px solid #33d17a;" class="nav-link font-weight-bold active" id="questionTabDemo-tab" data-toggle="pill" href="#questionDemo" role="tab" aria-controls="questionDemo" aria-selected="true">1</a>
+                            </li>
+                        </div>
+                        <div class="col-2">
+                            <li class="nav-item">
+                                <a style="padding: 3px; background-color: rgba(144,238,144,0.5); color: #1a6342; border: 1px solid #33d17a;" class="nav-link font-weight-bold" id="questionTabDemoMC-tab" data-toggle="pill" href="#questionDemoMC" role="tab" aria-controls="questionDemoMC" aria-selected="false">2</a>
+                            </li>
+                        </div>
+                        <div class="col-2">
+                            <li class="nav-item">
+                                <a style="padding: 3px; background-color: rgba(144,238,144,0.5); color: #1a6342; border: 1px solid #33d17a;" class="nav-link font-weight-bold" id="questionTabDemoSC-tab" data-toggle="pill" href="#questionDemoSC" role="tab" aria-controls="questionDemoSC" aria-selected="false">3</a>
+                            </li>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <form id="quizForm" action="{% url 'core:submit_answer' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="q_pattern" value="demo">
+            <div class="tab-content" id="questionTabContent">
+                <div class="tab-pane fade show active" id="questionDemo" role="tabpanel" aria-labelledby="questionTabDemo-tab">
+                    <input type="hidden" name="question_demo" value="demo">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-10">
+                                    <p class="mb-2"><strong>Question Demo</strong></p>
+                                </div>
+                                <div class="col-2">
+                                    <i class="fe fe-clock fe-16"></i>
+                                    <span id="timerDemo"></span>
+                                </div>
+                            </div>
+                            <p class="mb-2"><strong>Complete the sentence: The quick brown <span class="drag-drop-zone" id="dragDropZone1" data-answer="fox">_____</span> jumps over the <span class="drag-drop-zone" id="dragDropZone2" data-answer="lazy">_____</span> dog.</strong></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="option-label" draggable="true" id="demoOptionA">fox</div>
+                                    <div class="option-label" draggable="true" id="demoOptionB">cat</div>
+                                    <div class="option-label" draggable="true" id="demoOptionC">elephant</div>
+                                    <div class="option-label" draggable="true" id="demoOptionD">lazy</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="questionDemoMC" role="tabpanel" aria-labelledby="questionTabDemoMC-tab">
+                    <input type="hidden" name="question_demo_mc" value="demo_mc">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-10">
+                                    <p class="mb-2"><strong>Question Demo - Multiple Choice</strong></p>
+                                </div>
+                                <div class="col-2">
+                                    <i class="fe fe-clock fe-16"></i>
+                                    <span id="timerDemoMC"></span>
+                                </div>
+                            </div>
+                            <p class="mb-2"><strong>Which of the following are fruits? (Select all that apply)</strong></p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="demo_mc_option[]" id="demoMCOptionA" value="apple">
+                                <label class="form-check-label" for="demoMCOptionA">Apple</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="demo_mc_option[]" id="demoMCOptionB" value="carrot">
+                                <label class="form-check-label" for="demoMCOptionB">Carrot</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="demo_mc_option[]" id="demoMCOptionC" value="banana">
+                                <label class="form-check-label" for="demoMCOptionC">Banana</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="demo_mc_option[]" id="demoMCOptionD" value="potato">
+                                <label class="form-check-label" for="demoMCOptionD">Potato</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="questionDemoSC" role="tabpanel" aria-labelledby="questionTabDemoSC-tab">
+                    <input type="hidden" name="question_demo_sc" value="demo_sc">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-10">
+                                    <p class="mb-2"><strong>Question Demo - Single Choice</strong></p>
+                                </div>
+                                <div class="col-2">
+                                    <i class="fe fe-clock fe-16"></i>
+                                    <span id="timerDemoSC"></span>
+                                </div>
+                            </div>
+                            <p class="mb-2"><strong>What is the capital of France?</strong></p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="demo_sc_option" id="demoSCOptionA" value="paris">
+                                <label class="form-check-label" for="demoSCOptionA">Paris</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="demo_sc_option" id="demoSCOptionB" value="london">
+                                <label class="form-check-label" for="demoSCOptionB">London</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="demo_sc_option" id="demoSCOptionC" value="berlin">
+                                <label class="form-check-label" for="demoSCOptionC">Berlin</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="demo_sc_option" id="demoSCOptionD" value="madrid">
+                                <label class="form-check-label" for="demoSCOptionD">Madrid</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 text-center mt-3">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary text-dark" id="skipButton">Next</button>
+                        <button type="submit" class="btn btn-success text-light">Submit Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+</div>
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var skipButton = document.getElementById('skipButton');
+
+        skipButton.addEventListener('click', function() {
+            alert('Next button clicked, but no other questions available in demo.');
+        });
+
+        function startCountdown(duration, display) {
+            var timer = duration * 60, minutes, seconds;
+
+            var form = document.getElementById('quizForm');
+
+            var countdownInterval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(countdownInterval); 
+                    form.submit();
+                }
+            }, 1000);
+        }
+
+        var durationInMinutes = 5;
+        var display = document.getElementById('timerDemo');
+        startCountdown(durationInMinutes, display);
+
+        // Drag and drop functionality
+        var dragDropZones = document.querySelectorAll('.drag-drop-zone');
+        var draggableItems = document.querySelectorAll('.option-label');
+
+        draggableItems.forEach(function(item) {
+            item.addEventListener('dragstart', function(event) {
+                event.dataTransfer.setData("text/plain", event.target.textContent);
+            });
+        });
+
+        dragDropZones.forEach(function(zone) {
+            zone.addEventListener('dragover', function(event) {
+                event.preventDefault();
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', function() {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', function(event) {
+                event.preventDefault();
+                zone.classList.remove('drag-over');
+                var data = event.dataTransfer.getData("text/plain");
+                zone.textContent = data;
+            });
+        });
+    });
+</script>
+{% endblock %}

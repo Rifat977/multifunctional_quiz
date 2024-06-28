@@ -1,0 +1,103 @@
+{% extends 'partials/base.html' %}
+
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="main-banner wow fadeIn" id="top" data-wow-duration="1s" data-wow-delay="0.5s">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="row">
+          <div class="col-lg-6 align-self-center">
+            <div class="left-content show-up header-text wow fadeInLeft" data-wow-duration="1s" data-wow-delay="1s">
+              <div class="row">
+                <div class="col-lg-12">
+                  <h2>Elevate Learning, Empower Success: Where Preparation Pays Off!</h2>
+                  <p>Achieving success in the Entrance Exam isn't about luck or chance; it's about dedication, discipline, and consistent preparation. Every day devoted to study brings you one step closer to realizing your dream of serving the nation.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="right-image wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
+              <img src="{% static 'landing_page/assets/images/slider-dec.png' %}" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="services" class="services section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+        <div class="section-heading  wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">
+          <h4 style="color: #6879BB;">Amazing Services &amp; Features for you</h4>
+          <img src="{% static 'landing_page/assets/images/heading-line-dec.png' %}" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4 mt-3">
+        <div class="service-item first-service">
+          <div class="icon"></div>
+          <h4>Why EntranceQuiz?</h4>
+          <p>
+            We've pioneered EntranceQuiz platform by recognizing the challenges students face during entrance exam preparation. 
+          </p>
+          <p>
+            Now, students can not only prepare for their entrance exams but also earn money to support themselves financially.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 mt-3">
+        <div class="service-item second-service">
+          <div class="icon"></div>
+          <h4>Sorry!</h4>
+          <p>
+            Why apologize? Well, this platform isn't for everyone; it's exclusively for students dedicated to their goals and with valid reasons for achieving them. Our AI system identifies these exceptional individuals and provides tailored training to help them reach their goals
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 mt-3">
+        <div class="service-item third-service">
+          <div class="icon"></div>
+          <h4>Quality</h4>
+          <p>We prioritize maintaining high quality quizzes. Our team of highly experienced experts ensures that you can crack your goals without compromising on excellence.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 mt-3">
+        <div class="service-item first-service">
+          <div class="icon"></div>
+          <h4>Quizzes & Rewards</h4>
+          <p>Our quizzes are organized by subjects and feature various difficulty levels, aimed at bolstering your confidence for the actual examination. Additionally, we ensure comprehensive coverage of the prescribed syllabus for the supported entrance exams. In line with this, we have devised rewards corresponding to the difficulty levels of the questions, ensuring that your hard work is genuinely rewarded</p>
+        </div>
+      </div>
+      <div class="col-lg-4 mt-3">
+        <div class="service-item first-service">
+          <div class="icon"></div>
+          <h4>Source of fund</h4>
+          <p>
+            To be transparent, our platform relies solely on the financial support of our dedicated team members to ensure smooth operations. Driven by a vision, we aim to enable our youth to solely concentrate on their goals and contribute to the nation without the burden of financial concerns.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 mt-3">
+        <div class="service-item first-service">
+          <div class="icon"></div>
+          <h4>Your commitment</h4>
+          <p>
+            We ask for your commitment that if this platform assists you in achieving your goals and finding success, you will consider contributing or donating to support others in reaching their aspirations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

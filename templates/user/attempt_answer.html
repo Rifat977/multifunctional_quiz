@@ -1,0 +1,137 @@
+{% extends 'user/assets/base.html' %}
+
+{% block title %}Attempt Answer{% endblock %}
+
+{% load custom_filters %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center">
+        <h2 class="mb-3">Quiz Review</h2>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-4">
+                        <p class="card-text"><strong>Subject:</strong> {{ subject_name }}</p>
+                        <p class="card-text"><strong>Course Tier:</strong> {{ course_tier }}</p>
+                        <p class="card-text"><strong>Points for Each Question:</strong> {{ points_for_each }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+        {% for user_answer in user_answers %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <p class="mb-2"><strong>{{ user_answer.question.text }}</strong></p>
+                    {% if user_answer.selected_answer %}
+                    {% if user_answer.selected_answer == user_answer.question.correct_answer %}
+                    <div class="alert alert-success" role="alert">
+                        Correct Answer: {{ user_answer.selected_answer }}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        Your Answer: {{ user_answer.selected_answer }}<br>
+                        Correct Answer: {{ user_answer.question.correct_answer }}
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        Skipped
+                    </div>
+                    {% endif %}
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="customRadio1_{{ user_answer.id }}" value="A" {% if user_answer.selected_answer == 'A' %}checked{% endif %} name="customRadio_{{ user_answer.question.id }}"
+                            class="custom-control-input" disabled>
+                        <label class="custom-control-label {% if user_answer.selected_answer == 'A' and user_answer.is_correct %} text-success {% elif user_answer.selected_answer == 'A' %} text-danger {% elif user_answer.question.correct_answer == 'A' %} text-success {% endif %}" for="customRadio1_{{ user_answer.id }}">{{ user_answer.question.option_a }}</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="customRadio2_{{ user_answer.id }}" value="B" {% if user_answer.selected_answer == 'B' %}checked{% endif %} name="customRadio_{{ user_answer.question.id }}"
+                            class="custom-control-input" disabled>
+                        <label class="custom-control-label {% if user_answer.selected_answer == 'B' and user_answer.is_correct %} text-success {% elif user_answer.selected_answer == 'B' %} text-danger {% elif user_answer.question.correct_answer == 'B' %} text-success {% endif %}" for="customRadio2_{{ user_answer.id }}">{{ user_answer.question.option_b }}</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="customRadio3_{{ user_answer.id }}" value="C" {% if user_answer.selected_answer == 'C' %}checked{% endif %} name="customRadio_{{ user_answer.question.id }}"
+                            class="custom-control-input" disabled>
+                        <label class="custom-control-label {% if user_answer.selected_answer == 'C' and user_answer.is_correct %} text-success {% elif user_answer.selected_answer == 'C' %} text-danger {% elif user_answer.question.correct_answer == 'C' %} text-success {% endif %}" for="customRadio3_{{ user_answer.id }}">{{ user_answer.question.option_c }}</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="customRadio4_{{ user_answer.id }}" value="D" {% if user_answer.selected_answer == 'D' %}checked{% endif %} name="customRadio_{{ user_answer.question.id }}"
+                            class="custom-control-input" disabled>
+                        <label class="custom-control-label {% if user_answer.selected_answer == 'D' and user_answer.is_correct %} text-success {% elif user_answer.selected_answer == 'D' %} text-danger {% elif user_answer.question.correct_answer == 'D' %} text-success {% endif %}" for="customRadio4_{{ user_answer.id }}">{{ user_answer.question.option_d }}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+</div>
+
+<div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center justify-content-center">
+                <h4 class="modal-title" id="resultModalLabel">Summary</h4>
+            </div>
+            <div class="modal-body text-center">
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <i class="fe fe-check text-success h5"></i>
+                                <h6 class="mt-2">Correct Answers</h5>
+                                <p class="h3">{{ total_correct_answers }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <i class="fe fe-chevrons-right text-warning h5"></i>
+                                <h6 class="mt-2">Skipped Answers</h5>
+                                <p class="h3">{{ total_skipped_answers }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <i class="bi bi-x-circle text-danger h5"></i>
+                                <h6 class="mt-2">Wrong Answers</h5>
+                                <p class="h3">{{ total_wrong_answers }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <i class="fe fe-dollar-sign text-primary h5"></i>
+                                <h6 class="mt-2">Earned Points</h6>
+                                <p class="h3">{{ total_points }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer text-center justify-content-center">
+                <button type="button" class="btn btn-success text-light px-5" data-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $('#resultModal').modal('show');
+    });
+</script>
+
+{% endblock %}
