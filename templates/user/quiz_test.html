@@ -5,7 +5,7 @@
 {% block stylesheet %} 
 <style>
     .active {
-        background-color: lightgreen !important;
+        background-color: rgb(86, 86, 86) !important;
     }
     .selected {
         background-color: #e0ffe0;
@@ -45,13 +45,22 @@
         background-color: #f9f9f9;
         cursor: pointer;
     }
+    .incorrect-box {
+        border: 2px dashed #f00;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 10px;
+        text-align: center;
+        min-height: 50px;
+        margin-bottom: 10px;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4 col-12">
         <div class="card">
             <div class="card-body">
                 <div class="col-12 text-center">
@@ -63,25 +72,26 @@
                     <div class="row justify-content-center text-center">
                         <div class="col-2">
                             <li class="nav-item">
-                                <a style="padding: 3px; background-color: rgba(144,238,144,0.5); color: #1a6342; border: 1px solid #33d17a;" class="nav-link font-weight-bold active" id="questionTabDemo-tab" data-toggle="pill" href="#questionDemo" role="tab" aria-controls="questionDemo" aria-selected="true">1</a>
+                                <a style="padding: 3px; background-color: #3ad2a1; color: #ffffff; border: 1px solid #ffffff;" class="nav-link font-weight-bold active" id="questionTabDemo-tab" data-toggle="pill" href="#questionDemo" role="tab" aria-controls="questionDemo" aria-selected="true">1</a>
                             </li>
                         </div>
                         <div class="col-2">
                             <li class="nav-item">
-                                <a style="padding: 3px; background-color: rgba(144,238,144,0.5); color: #1a6342; border: 1px solid #33d17a;" class="nav-link font-weight-bold" id="questionTabDemoMC-tab" data-toggle="pill" href="#questionDemoMC" role="tab" aria-controls="questionDemoMC" aria-selected="false">2</a>
+                                <a style="padding: 3px; background-color: #3ad2a1; color: #ffffff; border: 1px solid #33d17a;" class="nav-link font-weight-bold" id="questionTabDemoMC-tab" data-toggle="pill" href="#questionDemoMC" role="tab" aria-controls="questionDemoMC" aria-selected="false">2</a>
                             </li>
                         </div>
                         <div class="col-2">
                             <li class="nav-item">
-                                <a style="padding: 3px; background-color: rgba(144,238,144,0.5); color: #1a6342; border: 1px solid #33d17a;" class="nav-link font-weight-bold" id="questionTabDemoSC-tab" data-toggle="pill" href="#questionDemoSC" role="tab" aria-controls="questionDemoSC" aria-selected="false">3</a>
+                                <a style="padding: 3px; background-color: #3ad2a1; color: #ffffff; border: 1px solid #33d17a;" class="nav-link font-weight-bold" id="questionTabDemoSC-tab" data-toggle="pill" href="#questionDemoSC" role="tab" aria-controls="questionDemoSC" aria-selected="false">3</a>
                             </li>
                         </div>
+                        
                     </div>
                 </ul>
             </div>
         </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8 col-12">
         <form id="quizForm" action="{% url 'core:submit_answer' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="q_pattern" value="demo">
@@ -101,11 +111,19 @@
                             </div>
                             <p class="mb-2"><strong>Complete the sentence: The quick brown <span class="drag-drop-zone" id="dragDropZone1" data-answer="fox">_____</span> jumps over the <span class="drag-drop-zone" id="dragDropZone2" data-answer="lazy">_____</span> dog.</strong></p>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="option-label" draggable="true" id="demoOptionA">fox</div>
                                     <div class="option-label" draggable="true" id="demoOptionB">cat</div>
                                     <div class="option-label" draggable="true" id="demoOptionC">elephant</div>
                                     <div class="option-label" draggable="true" id="demoOptionD">lazy</div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="card mt-3">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Incorrect Words</h6>
+                                            <div class="incorrect-box" id="incorrectBox"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -188,14 +206,11 @@
             </div>
         </form>
     </div>
-    
 </div>
 
 {% endblock %}
 
-
 {% block script %}
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var skipButton = document.getElementById('skipButton');
@@ -232,10 +247,17 @@
         // Drag and drop functionality
         var dragDropZones = document.querySelectorAll('.drag-drop-zone');
         var draggableItems = document.querySelectorAll('.option-label');
+        var incorrectBox = document.getElementById('incorrectBox');
+
+        // Store original positions
+        var originalPositions = {};
+        draggableItems.forEach(function(item) {
+            originalPositions[item.id] = item.parentNode;
+        });
 
         draggableItems.forEach(function(item) {
             item.addEventListener('dragstart', function(event) {
-                event.dataTransfer.setData("text/plain", event.target.textContent);
+                event.dataTransfer.setData("text/plain", event.target.id);
             });
         });
 
@@ -252,10 +274,75 @@
             zone.addEventListener('drop', function(event) {
                 event.preventDefault();
                 zone.classList.remove('drag-over');
+
+                if (zone.textContent.trim() === '_____') {
+                    var data = event.dataTransfer.getData("text/plain");
+                    var draggedElement = document.getElementById(data);
+                    zone.textContent = draggedElement.textContent;
+
+                    // Hide the dragged item
+                    draggedElement.style.display = 'none';
+
+                    // Handle returning an item to its original position
+                    zone.addEventListener('click', function() {
+                        if (zone.textContent === draggedElement.textContent) {
+                            draggedElement.style.display = 'inline-block';
+                            originalPositions[draggedElement.id].appendChild(draggedElement);
+                            zone.textContent = '_____';
+                        }
+                    });
+                } else {
+                    // If the drop zone is occupied, move the item to the incorrect box
+                    var data = event.dataTransfer.getData("text/plain");
+                    var draggedElement = document.getElementById(data);
+                    incorrectBox.appendChild(draggedElement);
+                }
+            });
+        });
+
+        // Allow items to be directly moved to the incorrect box from their original position
+        draggableItems.forEach(function(item) {
+            item.addEventListener('dragstart', function(event) {
+                event.dataTransfer.setData("text/plain", event.target.id);
+            });
+
+            incorrectBox.addEventListener('dragover', function(event) {
+                event.preventDefault();
+                incorrectBox.classList.add('drag-over');
+            });
+
+            incorrectBox.addEventListener('dragleave', function() {
+                incorrectBox.classList.remove('drag-over');
+            });
+
+            incorrectBox.addEventListener('drop', function(event) {
+                event.preventDefault();
+                incorrectBox.classList.remove('drag-over');
+
                 var data = event.dataTransfer.getData("text/plain");
-                zone.textContent = data;
+                var draggedElement = document.getElementById(data);
+                incorrectBox.appendChild(draggedElement);
+            });
+        });
+
+        // Allow items to be moved back to their original position from the incorrect box
+        incorrectBox.addEventListener('click', function(event) {
+            var target = event.target;
+            if (target.classList.contains('option-label')) {
+                target.style.display = 'inline-block';
+                originalPositions[target.id].appendChild(target);
+            }
+        });
+
+        // Allow items to be directly moved to the incorrect box from their original position
+        draggableItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                if (!item.parentNode.classList.contains('incorrect-box')) {
+                    incorrectBox.appendChild(item);
+                }
             });
         });
     });
 </script>
+
 {% endblock %}
