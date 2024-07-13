@@ -7,7 +7,7 @@ urlpatterns = [
     path('privacy-policy/', views.policy, name='policy'),
     path('feedback/', views.feedback, name='feedback'),
     path('contact-us/', views.contact, name='contact'),
-    path('home/', views.home, name='home'),
+    path('dashboard/', views.home, name='home'),
     path('quizes/', views.quizes, name='quizes'),
     path('quiz/', views.quiz, name='quiz'),
     path('submit_answer/', views.submit_answer, name='submit_answer'),
@@ -15,5 +15,5 @@ urlpatterns = [
     path('wallet/', views.wallet, name='wallet'),
     path('withdrawal/', views.withdrawal, name='withdrawal'),
 
-    path('quiz-test/', views.quiz_test)
+    # path('quiz-test/', views.quiz_test)
 ]

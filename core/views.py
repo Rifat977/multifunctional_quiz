@@ -63,7 +63,7 @@ def home(request):
 
     for quizzes_in_subject in f_quizzes_grouped_by_subject.values():
         for quiz in quizzes_in_subject:
-            attempt = UserAttempt.objects.filter(user=user, question=quiz).first()
+            attempt = UserAttempt.objects.filter(user=user, question_pattern=quiz).first()
             if attempt:
                 f_participation_status[quiz.id] = True
                 attempt_ids[quiz.id] = attempt.id
@@ -90,7 +90,7 @@ def quizes(request):
     is_all_correct = {}
 
     for quiz in quizzes:
-        attempt = UserAttempt.objects.filter(user=user, question=quiz).first()
+        attempt = UserAttempt.objects.filter(user=user, question_pattern=quiz).first()
         if attempt:
             participation_status[quiz.id] = True
             attempt_ids[quiz.id] = attempt.id
@@ -106,6 +106,25 @@ def quizes(request):
         }
     )
 
+# @login_required
+# def quiz(request):
+#     if request.method == 'POST':
+#         user = request.user
+#         q_pattern_id = request.POST.get('quiz')
+#         q_pattern = QuestionPattern.objects.get(pk=q_pattern_id)
+
+#         user_attempt = UserAttempt.objects.get_or_create(user=user, question_pattern=q_pattern)
+#         atm = UserAttempt.objects.get(user=user, question_pattern=q_pattern)
+#         if q_pattern.random_serve:
+#             questions = Question.objects.filter(question_pattern=q_pattern)
+#             total_questions_served = min(q_pattern.total_questions_served, questions.count())
+#             questions = random.sample(list(questions), total_questions_served)
+#         else:
+#             questions = Question.objects.filter(question_pattern=q_pattern).order_by('id')[:q_pattern.total_questions_served]
+
+#         return render(request, 'user/quiz_test.html', {'q_pattern': q_pattern, 'questions': questions, 'user_attempt':atm})
+#     return redirect("core:home")
+
 @login_required
 def quiz(request):
     if request.method == 'POST':
@@ -113,16 +132,22 @@ def quiz(request):
         q_pattern_id = request.POST.get('quiz')
         q_pattern = QuestionPattern.objects.get(pk=q_pattern_id)
 
-        user_attempt = UserAttempt.objects.get_or_create(user=user, question=q_pattern)
-        atm = UserAttempt.objects.get(user=user, question=q_pattern)
+        user_attempt, created = UserAttempt.objects.get_or_create(user=user, question_pattern=q_pattern)
+
         if q_pattern.random_serve:
-            questions = Question.objects.filter(pattern=q_pattern)
+            questions = Question.objects.filter(question_pattern=q_pattern)
             total_questions_served = min(q_pattern.total_questions_served, questions.count())
             questions = random.sample(list(questions), total_questions_served)
         else:
-            questions = Question.objects.filter(pattern=q_pattern).order_by('id')[:q_pattern.total_questions_served]
+            questions = Question.objects.filter(question_pattern=q_pattern).order_by('id')[:q_pattern.total_questions_served]
 
-        return render(request, 'user/quiz.html', {'q_pattern': q_pattern, 'questions': questions, 'user_attempt':atm})
+        context = {
+            'q_pattern': q_pattern,
+            'questions': questions,
+            'user_attempt': user_attempt,
+        }
+        return render(request, 'user/quiz_test.html', context)
+
     return redirect("core:home")
 
 
@@ -200,10 +225,10 @@ def show_user_answers(request, user_attempt_id):
     total_wrong_answers = 0
     total_points = 0
 
-    course_name = user_attempt.question.subject.course.name
-    subject_name = user_attempt.question.subject.name
-    course_tier = user_attempt.question.tier
-    points_for_each = user_attempt.question.points
+    course_name = user_attempt.question_pattern.subject.course.name
+    subject_name = user_attempt.question_pattern.subject.name
+    course_tier = user_attempt.question_pattern.tier
+    points_for_each = user_attempt.question_pattern.points
 
     for user_answer in user_answers:
         if user_answer.selected_answer == user_answer.question.correct_answer:

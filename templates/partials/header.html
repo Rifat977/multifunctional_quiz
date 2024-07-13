@@ -1,33 +1,101 @@
 {% load static %}
-<header class="header-area header-sticky wow slideInDown" data-wow-duration="0.75s" data-wow-delay="0s">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <nav class="main-nav">
-            <!-- ***** Logo Start ***** -->
-            <a href="index.html" class="logo">
-              <img src="{% static 'logo/logo.svg' %}" alt="Chain App Dev" style="width: auto; height: 60px;">
-          </a>          
-            <!-- ***** Logo End ***** -->
-            <!-- ***** Menu Start ***** -->
-            <ul class="nav">
-              {% url 'core:index' as index %}
-              <li class="scroll-to-section"><a href="{% url 'core:index' %}" style="{% if request.path == index %}color: #6879BB;{% endif %}">Home</a></li>
-              {% url 'core:policy' as policy %}
-              <li class="scroll-to-section"><a href="{% url 'core:policy' %}" style="{% if request.path == policy %}color: #6879BB;{% endif %}">Privacy Policy</a></li>
-              {% url 'core:feedback' as feedback %}
-              <li class="scroll-to-section"><a href="{% url 'core:feedback' %}" style="{% if request.path == feedback %}color: #6879BB;{% endif %}">Feedback</a></li>
-              {% url 'core:contact' as contact %}
-              <li class="scroll-to-section"><a href="{% url 'core:contact' %}" style="{% if request.path == contact %}color: #6879BB;{% endif %}">Contact Us</a></li>
-              <li class="scroll-to-section"><a href="{% url 'account:register' %}">Register</a></li>
-              <li><div class="gradient-button"><a id="modal_trigger" href="{% url 'account:login' %}"><i class="fa fa-sign-in-alt"></i> Sign In Now</a></div></li> 
-            </ul>        
-            <a class='menu-trigger'>
-                <span>Menu</span>
-            </a>
-            <!-- ***** Menu End ***** -->
-          </nav>
-        </div>
+<div class="popup-search-box d-none d-lg-block">
+  <button class="searchClose"><i class="fal fa-times"></i></button>
+  <form action="#"><input type="text" placeholder="What are you looking for?"> <button type="submit"><i class="fal fa-search"></i></button></form>
+</div>
+<div class="th-menu-wrapper">
+  <div class="th-menu-area text-center">
+      <button class="th-menu-toggle"><i class="fal fa-times"></i></button>
+      <div class="mobile-logo"><a href="index.html"><img src="https://themeholy.com/html/edura/demo/assets/img/logo.svg" alt="Edura"></a></div>
+      <div class="th-mobile-menu">
+          <ul>
+              <li>
+                  <a href="index.html">Home</a>
+              </li>
+              <li><a href="contact.html">Contact</a></li>
+          </ul>
       </div>
-    </div>
-  </header>
+  </div>
+</div>
+<header class="th-header header-layout-default">
+  <div class="logo-bg-half"></div>
+  <div class="header-top">
+      <div class="container-fluid">
+          <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
+              <div class="col-auto d-none d-lg-block">
+                  <div class="header-links">
+                      <ul>
+                          <li><i class="far fa-phone"></i><a href="tel:+11156456825">+111 (564) 568 25</a></li>
+                          <li class="d-none d-xl-inline-block"><i class="far fa-envelope"></i><a href="mailto:info@Edura.com">info@edura.com</a></li>
+                          <li><i class="far fa-clock"></i>Mon - Sat: 8:00 - 15:00</li>
+                      </ul>
+                  </div>
+              </div>
+              <div class="col-auto">
+                  <div class="header-links header-right">
+                      <ul>
+                          <li>
+                              <div class="header-social"><span class="social-title">Follow Us:</span> <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a> <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a> <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a> <a href="https://www.youtube.com/"><i class="fab fa-youtube"></i></a> <a href="https://www.instagram.com/"><i class="fab fa-skype"></i></a></div>
+                          </li>
+                          <li class="d-none d-lg-inline-block"><i class="far fa-user"></i> 
+                            {% if request.user.is_authenticated %}
+                            <a href="{% url 'account:login' %}">Dashboard</a>
+                            {% else %}
+                            <a href="{% url 'account:login' %}">Login</a> / <a href="{% url 'account:register' %}">Register</a>
+                            {% endif %}
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="sticky-wrapper">
+      <div class="menu-area">
+          <div class="container-fluid">
+              <div class="row align-items-center justify-content-between">
+                  <div class="col-xl-auto">
+                      <div class="row align-items-center justify-content-between">
+                          <div class="col-auto">
+                              <div class="header-logo"><a href="index.html"><img src="https://themeholy.com/html/edura/demo/assets/img/logo-white.svg" alt="Edura"></a></div>
+                          </div>
+                          <div class="col-auto">
+                              <nav class="main-menu d-none d-lg-inline-block">
+                                  <ul>
+                                    <li><a href="{% url 'core:index' %}">Home</a></li>
+                                    <li><a href="{% url 'core:quizes' %}">Quizzes</a></li>
+                                    <li><a href="">About Us</a></li>
+                                    <li><a href="">Privacy & Policy</a></li>
+                                    <li><a href="">Contact</a></li>
+                                  </ul>
+                              </nav>
+                              <button type="button" class="th-menu-toggle d-block d-lg-none"><i class="far fa-bars"></i></button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-auto d-none d-xl-block">
+                      <div class="row">
+                          <div class="col-auto">
+                              <div class="header-button">
+                                  <div class="category-menu-wrap mr-5">
+                                      <a class="menu-expand" href="#"><i class="fa-solid fa-grid-2 me-2"></i>Categories <i class="fa-solid fa-angle-down ms-auto"></i></a>
+                                      <nav class="category-menu">
+                                          <ul>
+                                              <li><a href="course-4.html">Javascript</a></li>
+                                              <li><a href="course-4.html">Marketing</a></li>
+                                              <li><a href="course-4.html">Data Science</a></li>
+                                          </ul>
+                                      </nav>
+                                      <form class="search-form"><input type="text" placeholder="Search For Course...."> <button type="submit"><i class="far fa-search"></i></button></form>
+                                  </div>
+                                  <a href="contact.html" class="th-btn ml-20">Contact Us <i class="fas fa-arrow-right ms-1"></i></a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="logo-bg"></div>
+      </div>
+  </div>
+</header>

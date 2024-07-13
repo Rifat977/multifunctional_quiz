@@ -12,17 +12,20 @@
         </div>
         <ul class="navbar-nav flex-fill w-100 mb-2">
             <li class="nav-item dropdown">
-                <a href="{% url 'core:home' %}" class="nav-link">
+                <a href="{% url 'core:home' %}" class="nav-link d-flex align-items-center">
                     <i class="fe fe-home fe-16"></i>
-                    <span class="ml-3 item-text">Dashboard</span><span class="sr-only">(current)</span>
+                    <span class="ml-3 item-text">Dashboard</span>
+                    <span class="sr-only">(current)</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
-                <a href="{% url 'core:quizes' %}" class="nav-link">
+                <a href="{% url 'core:quizes' %}" class="nav-link d-flex align-items-center">
                     <i class="fe fe-book-open fe-16"></i>
-                    <span class="ml-3 item-text">Quizes</span><span class="sr-only">(current)</span>
+                    <span class="ml-3 item-text">Quizes</span>
+                    <span class="sr-only">(current)</span>
                 </a>
             </li>
         </ul>
+        
     </nav>
 </aside>

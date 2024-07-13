@@ -1,41 +1,64 @@
 from django.contrib import admin
-from .models import *
+from .models import Course, Subject, QuestionPattern, SingleChoiceQuestion, SingleChoiceOption, \
+                    MultipleChoiceQuestion, MultipleChoiceOption, \
+                    DragAndDropQuestion, DragAndDropOption, \
+                    DropDownQuestion, DropDownOption
 
-# Register your models here.
-class CourseDisplay(admin.ModelAdmin):
-    list_display = ('name','slug', 'status')
-    search_fields  = ('name','slug', 'status')
+class SingleChoiceOptionInline(admin.TabularInline):
+    model = SingleChoiceOption
+    extra = 3  
 
+class SingleChoiceQuestionAdmin(admin.ModelAdmin):
+    inlines = [SingleChoiceOptionInline]
+    list_display = ('question_text', 'question_pattern',)  
+    list_filter = ('question_pattern',)  
+    search_fields = ('question_text',)  
 
-class SubjectDisplay(admin.ModelAdmin):
-    list_display = ('name', 'course', 'is_active')
-    search_fields = ('course', 'name')
-    list_filter = ('course__name', 'name')
-    ordering = ('-id',) 
+class MultipleChoiceOptionInline(admin.TabularInline):
+    model = MultipleChoiceOption
+    extra = 3  
 
+class MultipleChoiceQuestionAdmin(admin.ModelAdmin):
+    inlines = [MultipleChoiceOptionInline]
+    list_display = ('question_text', 'question_pattern',)  
+    list_filter = ('question_pattern',)  
+    search_fields = ('question_text',)  
 
-admin.site.register(Course, CourseDisplay)
+class DragAndDropOptionInline(admin.TabularInline):
+    model = DragAndDropOption
+    extra = 3  
 
-admin.site.register(Subject, SubjectDisplay)
+class DragAndDropQuestionAdmin(admin.ModelAdmin):
+    inlines = [DragAndDropOptionInline]
+    list_display = ('question_text', 'sentence_to_complete' ,'question_pattern',)  
+    list_filter = ('question_pattern',)  
+    search_fields = ('question_text',)  
 
-admin.site.register(QuestionPattern)
+class DropDownOptionInline(admin.TabularInline):
+    model = DropDownOption
+    extra = 3  
 
-admin.site.register(Question)
+class DropDownQuestionAdmin(admin.ModelAdmin):
+    inlines = [DropDownOptionInline]
+    list_display = ('question_text', 'question_pattern',)  
+    list_filter = ('question_pattern',)  
+    search_fields = ('question_text',)  
 
-admin.site.register(UserAttempt)
+class QuestionInline(admin.TabularInline):
+    model = SingleChoiceQuestion  
+    extra = 0  
 
-admin.site.register(UserAnswer)
+class QuestionPatternAdmin(admin.ModelAdmin):
+    inlines = [QuestionInline]
+    list_display = ('name', 'subject', 'tier', 'is_active', 'total_questions_served',)  # Replace with actual fields
+    list_filter = ('subject',)  # Assuming these are fields on QuestionPattern
+    search_fields = ('pattern_name',)  
 
-
-# class QuestionDisplay(admin.ModelAdmin):
-#     list_display = ('subject', 'tier', 'shortened_text', 'correct_answer')
-#     search_fields = ('subject__name', 'tier', 'text', 'correct_answer')
-#     list_filter = ('subject__name',)
-#     ordering = ('-id',)
-
-#     def shortened_text(self, obj):
-#         return obj.text[:30] + '...' if len(obj.text) > 30 else obj.text
-
-#     shortened_text.short_description = 'Text'
-
-# admin.site.register(Question, QuestionDisplay)
+# Registering models with their respective admin classes
+admin.site.register(Course)
+admin.site.register(Subject)
+admin.site.register(QuestionPattern, QuestionPatternAdmin)
+admin.site.register(SingleChoiceQuestion, SingleChoiceQuestionAdmin)
+admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin)
+admin.site.register(DragAndDropQuestion, DragAndDropQuestionAdmin)
+admin.site.register(DropDownQuestion, DropDownQuestionAdmin)

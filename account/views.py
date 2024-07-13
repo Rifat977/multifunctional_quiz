@@ -212,7 +212,7 @@ def new_password(request, uidb64, token):
 def logout(request):
     if request.method=="POST":
         auth.logout(request)
-        return redirect('account:login')
+        return redirect('core:index')
 
 
 @login_required
