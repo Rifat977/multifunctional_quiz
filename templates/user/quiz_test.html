@@ -110,7 +110,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             {% for option in question.draganddropquestion.options.all %}
-                                            <div class="option-label" draggable="true" id="option{{ forloop.counter }}">{{ option }}</div>
+                                            <div class="option-label" draggable="true" id="demoOption{{ option.id }}">{{ option }}</div>
                                             {% endfor %}
                                         </div>
                                         <div class="col-md-12">
@@ -366,7 +366,10 @@ document.addEventListener("DOMContentLoaded", function() {
         // Function to find the parent incorrect box of a given element
         function findParentIncorrectBox(element) {
             var parent = element.parentNode;
+            console.log("Printing Parent:");
+            console.log(parent);
             while (parent) {
+                console.log(parent.classList);
                 if (parent.classList.contains('incorrect-box')) {
                     return parent;
                 }
@@ -409,4 +412,206 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+
+
+{% comment %} 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var nextButton = document.getElementById('nextButton');
+        var previousButton = document.getElementById('previousButton');
+    
+        function updateButtonState() {
+            var activeTab = document.querySelector('#questionTab a.active');
+            var tabs = Array.from(document.querySelectorAll('#questionTab a'));
+            var activeIndex = tabs.indexOf(activeTab);
+    
+            previousButton.disabled = activeIndex === 0;
+            nextButton.disabled = activeIndex === tabs.length - 1;
+        }
+    
+        function navigateTabs(direction) {
+            var activeTab = document.querySelector('#questionTab a.active');
+            var tabs = Array.from(document.querySelectorAll('#questionTab a'));
+            var activeIndex = tabs.indexOf(activeTab);
+            var newIndex = activeIndex + direction;
+    
+            if (newIndex >= 0 && newIndex < tabs.length) {
+                tabs[newIndex].click();
+            }
+        }
+    
+        nextButton.addEventListener('click', function() {
+            navigateTabs(1);
+            updateButtonState();
+        });
+    
+        previousButton.addEventListener('click', function() {
+            navigateTabs(-1);
+            updateButtonState();
+        });
+    
+        // Initialize button state
+        updateButtonState();
+    
+        function startCountdown(duration, display) {
+            var timer = duration * 60, minutes, seconds;
+    
+            var form = document.getElementById('quizForm');
+    
+            var countdownInterval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+    
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+    
+                display.textContent = minutes + ":" + seconds;
+    
+                if (--timer < 0) {
+                    clearInterval(countdownInterval); 
+                    form.submit();
+                }
+            }, 1000);
+        }
+    
+        var durationInMinutes = 5;
+    
+        var display = document.getElementById('timerDemo');
+        startCountdown(durationInMinutes, display);
+        var displayMC = document.getElementById('timerDemoMC');
+        startCountdown(durationInMinutes, displayMC);
+        var displaySC = document.getElementById('timerDemoSC');
+        startCountdown(durationInMinutes, displaySC);
+        var displayDropdown = document.getElementById('timerDropdown');
+        startCountdown(durationInMinutes, displayDropdown);
+    
+        // Drag and drop functionality
+        var dragDropZones = document.querySelectorAll('.drag-drop-zone');
+        var draggableItems = document.querySelectorAll('.option-label');
+        var incorrectBox = document.getElementById('incorrectBox');
+    
+        // Store original positions
+        var originalPositions = {};
+        draggableItems.forEach(function(item) {
+            originalPositions[item.id] = item.parentNode;
+        });
+    
+        draggableItems.forEach(function(item) {
+            item.addEventListener('dragstart', function(event) {
+                event.dataTransfer.setData("text/plain", event.target.id);
+            });
+        });
+    
+        dragDropZones.forEach(function(zone) {
+            zone.addEventListener('dragover', function(event) {
+                event.preventDefault();
+                zone.classList.add('drag-over');
+            });
+    
+            zone.addEventListener('dragleave', function() {
+                zone.classList.remove('drag-over');
+            });
+    
+            zone.addEventListener('drop', function(event) {
+                event.preventDefault();
+                zone.classList.remove('drag-over');
+    
+                if (zone.textContent.trim() === '_____') {
+                    var data = event.dataTransfer.getData("text/plain");
+                    var draggedElement = document.getElementById(data);
+                    zone.textContent = draggedElement.textContent;
+    
+                    // Hide the dragged item
+                    draggedElement.style.display = 'none';
+    
+                    // Handle returning an item to its original position
+                    zone.addEventListener('click', function() {
+                        if (zone.textContent === draggedElement.textContent) {
+                            draggedElement.style.display = 'inline-block';
+                            originalPositions[draggedElement.id].appendChild(draggedElement);
+                            zone.textContent = '_____';
+                        }
+                    });
+                } else {
+                    // If the drop zone is occupied, move the item to the incorrect box
+                    var data = event.dataTransfer.getData("text/plain");
+                    var draggedElement = document.getElementById(data);
+                    incorrectBox.appendChild(draggedElement);
+                }
+            });
+        });
+    
+        // Allow items to be directly moved to the incorrect box from their original position
+        draggableItems.forEach(function(item) {
+            item.addEventListener('dragstart', function(event) {
+                event.dataTransfer.setData("text/plain", event.target.id);
+            });
+    
+            incorrectBox.addEventListener('dragover', function(event) {
+                event.preventDefault();
+                incorrectBox.classList.add('drag-over');
+            });
+    
+            incorrectBox.addEventListener('dragleave', function() {
+                incorrectBox.classList.remove('drag-over');
+            });
+    
+            incorrectBox.addEventListener('drop', function(event) {
+                event.preventDefault();
+                incorrectBox.classList.remove('drag-over');
+    
+                var data = event.dataTransfer.getData("text/plain");
+                var draggedElement = document.getElementById(data);
+                incorrectBox.appendChild(draggedElement);
+            });
+        });
+    
+        // Allow items to be moved back to their original position from the incorrect box
+        incorrectBox.addEventListener('click', function(event) {
+            var target = event.target;
+            if (target.classList.contains('option-label')) {
+                target.style.display = 'inline-block';
+                originalPositions[target.id].appendChild(target);
+            }
+        });
+    
+        // Allow items to be directly moved to the incorrect box from their original position
+        draggableItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                if (!item.parentNode.classList.contains('incorrect-box')) {
+                    incorrectBox.appendChild(item);
+                }
+            });
+        });
+    
+        // Tab switching logic
+        var questionTabs = document.querySelectorAll('#questionTab a');
+        var tabContents = document.querySelectorAll('.tab-pane');
+    
+        questionTabs.forEach(function(tab) {
+            tab.addEventListener('click', function(event) {
+                event.preventDefault();
+                var target = document.querySelector(tab.getAttribute('href'));
+    
+                // Remove active class from all tabs and contents
+                questionTabs.forEach(function(tab) {
+                    tab.classList.remove('active');
+                });
+    
+                tabContents.forEach(function(content) {
+                    content.classList.remove('show', 'active');
+                });
+    
+                // Add active class to the clicked tab and corresponding content
+                tab.classList.add('active');
+                target.classList.add('show', 'active');
+    
+                // Update button state
+                updateButtonState();
+            });
+        });
+    });
+    </script>
+
+{% endblock %} {% endcomment %}
 {% endblock %}
