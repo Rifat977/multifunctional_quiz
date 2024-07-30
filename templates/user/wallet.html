@@ -1,0 +1,135 @@
+{% extends 'user/assets/base.html' %}
+
+{% block title %}Wallet{% endblock %}
+
+{% load custom_filters %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="col">
+                <h2 class="h5 page-title">My Wallet</h2>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                            <div class="alert alert-danger" role="alert">
+                        {% else %}
+                            <div class="alert alert-{{ message.tags }}" role="alert">
+                        {% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="row items-align-baseline">
+                <div class="col-md-12 col-lg-4">
+                    <div class="card shadow eq-card mb-4">
+                        <div class="card-body mb-n3">
+                            <div class="row items-align-baseline h-100">
+                                <div class="col-md-6 my-3">
+                                    <p class="mb-0"><strong class="mb-0 text-uppercase text-muted">Your Points</strong>
+                                    </p>
+                                    <h3>{{user.point}}</h3>
+                                </div>
+                                <div class="col-md-6 py-3">
+                                    <p class="mb-0"><strong class="mb-0 text-uppercase text-muted">Your Balance</strong>
+                                    </p>
+                                    <h3>{{total_amount}} {{per_point.currency}}</h3>
+                                </div>
+                                <div class="col-md-6 border-top py-3">
+                                    <p class="mb-1"><strong class="text-muted">Per Point</strong></p>
+                                    <h4 class="mb-0">{{per_point.per_point}} {{per_point.currency}}</h4>
+                                </div> <!-- .col -->
+                                <div class="col-md-6 border-top py-3">
+                                    <p class="mb-1"><strong class="text-muted">Minimum Withdrawal Amount</strong></p>
+                                    <h4 class="mb-0">{{per_point.min_withdrawal}} {{per_point.currency}}</h4>
+                                </div> <!-- .col -->
+                            </div>
+                        </div> <!-- .card-body -->
+                    </div> <!-- .card -->
+                </div> <!-- .col -->
+                <div class="card shadow mb-4 col-lg-6">
+                    <div class="card-header">
+                        <strong class="card-title">Balance Withdraw</strong>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'core:withdrawal' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group mb-3">
+                                        <label for="example-email">Wallet Address</label>
+                                        <input type="text" name="wallet_address" id="example-email" name="example-email" class="form-control"
+                                            placeholder="Enter Your wallet address">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="example-email">Network</label>
+                                        <select name="network" class="form-control" id="">
+                                            <option value="">Select Network</option>
+                                            <option value="TRC20">TRC20</option>
+                                            <option value="BEP20">BEP20</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="simpleinput">Withdrawal Amount</label>
+                                        <input type="number" name="amount"  id="simpleinput" class="form-control">
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-block btn-success text-white">Withdraw</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Recent orders -->
+                <div class="col-md-12">
+                  <div class="card shadow eq-card">
+                    <div class="card-header">
+                      <strong class="card-title">Withdrawal History</strong>
+                    </div>
+                    <div class="card-body">
+                      <table class="table table-hover table-borderless table-striped mt-n3 mb-n1">
+                        <thead>
+                          <tr>
+                            <th>Wallet Address</th>
+                            <th>Network</th>
+                            <th>Withdrawal Amount</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in withdrawals %}
+                            <tr>
+                                <td>{{ item.wallet_address }}</td>
+                                <td>{{ item.payment_method }}</td>
+                                <td>{{ item.amount}}</td>
+                                <td>
+                                    {% if item.status == 'Pending' %}
+                                        <span class="badge badge-pill badge-warning ">{{ item.status }}</span>
+                                    {% elif item.status == 'Processing' %}
+                                        <span class="badge badge-pill badge-primary ">{{ item.status }}</span>
+                                    {% elif item.status == 'Reject' %}
+                                        <span class="badge badge-pill badge-danger ">{{ item.status }}</span>
+                                    {% elif item.status == 'Complete' %}
+                                        <span class="badge badge-pill badge-success  text-light">{{ item.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div> 
+                </div> 
+                
+              </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

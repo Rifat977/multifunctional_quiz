@@ -1,0 +1,182 @@
+{% extends 'user/assets/base.html' %}
+
+{% block title %}Attempt Answer{% endblock %}
+
+{% load custom_filters %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center">
+        <h2 class="mb-3">Quiz Review</h2>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-4">
+                        <p class="card-text"><strong>Subject:</strong> {{ subject_name }}</p>
+                        <p class="card-text"><strong>Course Tier:</strong> {{ course_tier }}</p>
+                        <p class="card-text"><strong>Points for Each Question:</strong> {{ points_for_each }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% for user_answer in user_answers %}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <p class="mb-2"><strong>{{ user_answer.question.question_text }}</strong></p>
+                {% if user_answer.question.question_type == 'single_choice' %}
+                    {% for option in user_answer.question.singlechoicequestion.options.all %}
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="option_{{ user_answer.question.id }}_{{ option.id }}" value="{{ option.option_text }}"
+                                {% if user_answer.selected_answer == option.option_text %}checked{% endif %} class="custom-control-input" disabled>
+                            <label class="custom-control-label
+                                {% if user_answer.selected_answer == option.option_text and user_answer.selected_answer == option.option_text %} text-success
+                                {% elif user_answer.selected_answer == option.option_text %} text-danger
+                                {% elif option.is_correct %} text-success
+                                {% endif %}"
+                                for="option_{{ user_answer.question.id }}_{{ option.id }}">{{ option.option_text }}</label>
+                        </div>
+                    {% endfor %}
+                
+                {% elif user_answer.question.question_type == 'multiple_choice' %}
+                    {% for option in user_answer.question.multiplechoicequestion.options.all %}
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" id="option_{{ user_answer.question.id }}_{{ option.id }}" value="{{ option.option_text }}"
+                                {% if option.option_text in user_answer.selected_answer %}checked{% endif %} class="custom-control-input" disabled>
+                            <label class="custom-control-label
+                                {% if option.option_text in user_answer.selected_answer and option.is_correct %} text-success
+                                {% elif option.option_text in user_answer.selected_answer %} text-danger
+                                {% elif option.is_correct %} text-success
+                                {% endif %}"
+                                for="option_{{ user_answer.question.id }}_{{ option.id }}">{{ option.option_text }}</label>
+                        </div>
+                    {% endfor %}
+                
+                    {% elif user_answer.question.question_type == 'drag_and_drop' %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card mt-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Selected Options</h6>
+                                        {% for option in drag_and_drop_options %}
+                                            {% if option.id in user_answer.selected_answer %}
+                                                <p>{{ option.option_text }}</p>
+                                            {% else %}
+                                                <p>Option ID {{ option.id }} not in selected_answer: {{ user_answer.selected_answer }}</p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif user_answer.question.question_type == 'dropdown' %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card mt-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Selected Options</h6>
+                                        {% for item_id, selected_opt in user_answer.selected_answer.items %}
+                                            {% for option in drop_down_options %}
+                                                {% if option.id|stringformat:"d" == item_id|stringformat:"d" %}
+                                                    <p>{{ option.option_text }} - Selected: {{ selected_opt }}</p>
+                                                {% else %}
+                                                    <p>Option ID {{ option.id }} not matching item_id {{ item_id }} in selected_answer: {{ user_answer.selected_answer }}</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                
+                
+                {% if user_answer.selected_answer %}
+                    {% if user_answer.is_correct %}
+                        <div class="alert alert-success mt-3" role="alert">
+                            Correct Answer: {{ user_answer.selected_answer }}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-danger mt-3" role="alert">
+                            Your Answer: {{ user_answer.selected_answer }}<br>
+                            Correct Answer: {{ user_answer.question.correct_answer }}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-warning mt-3" role="alert">
+                        Skipped
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center justify-content-center">
+                <h4 class="modal-title" id="resultModalLabel">Summary</h4>
+            </div>
+            <div class="modal-body text-center">
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <i class="fe fe-check text-success h5"></i>
+                                <h6 class="mt-2">Correct Answers</h6>
+                                <p class="h3">{{ total_correct_answers }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <i class="fe fe-chevrons-right text-warning h5"></i>
+                                <h6 class="mt-2">Skipped Answers</h6>
+                                <p class="h3">{{ total_skipped_answers }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <i class="bi bi-x-circle text-danger h5"></i>
+                                <h6 class="mt-2">Wrong Answers</h6>
+                                <p class="h3">{{ total_wrong_answers }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <i class="fe fe-dollar-sign text-primary h5"></i>
+                                <h6 class="mt-2">Earned Points</h6>
+                                <p class="h3">{{ total_points }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer text-center justify-content-center">
+                <button type="button" class="btn btn-success text-light px-5" data-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $('#resultModal').modal('show');
+    });
+</script>
+{% endblock %}
