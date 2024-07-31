@@ -62,7 +62,7 @@
                             <div class="col-md-12">
                                 <div class="card mt-3">
                                     <div class="card-body">
-                                        <h6 class="card-title">Selected Options</h6>
+                                        <h6 class="card-title">Drag Options</h6>
                                         {% with drag_and_drop_options=drag_and_drop_options|get_item:user_answer.question.pk %}
                                             {% if drag_and_drop_options %}
                                                 {% for option in drag_and_drop_options %}
@@ -92,12 +92,14 @@
                                                 {% if dropdown_options %}
                                                     {% for item_id, options in dropdown_options.items %}
                                                         <p><strong>Dropdown Field {{ item_id }}:</strong></p>
-                                                        <select class="form-control">
-                                                            {% for option_id, option_text in options.items %}
-                                                                <option value="{{ option_id }}" {% if user_answer.selected_answer|get_item:item_id == option_text %}selected{% endif %}>
-                                                                    {{ option_text }}
-                                                                </option>
-                                                            {% endfor %}
+                                                        <select class="form-control mb-3">
+                                                            {% for option_id, option in options.items %}
+                                                            <option value="{{ option_id }}" 
+                                                                {% if user_answer.selected_answer|get_item:item_id == option.option_text %}selected{% endif %}>
+                                                                {{ option.option_text }}
+                                                            </option>
+                                                        {% endfor %}
+
                                                         </select>
                                                     {% endfor %}
                                                 {% else %}
@@ -205,12 +207,12 @@
                                 <div class="alert alert-success mt-3" role="alert">
                                     Correct Answers:
                                     {% with dropdown_options=drop_down_options|get_item:user_answer.question.pk %}
-                                        {% if dropdown_options %}
+                                        {% if dropdown_options %}   
                                             {% for item_id, options in dropdown_options.items %}
                                                 <p><strong>Dropdown Field {{ item_id }}:</strong>
-                                                    {% for option_id, option_text in options.items %}
+                                                    {% for option_id, option in options.items %}
                                                         {% if option.is_correct %}
-                                                            {{ option_text }}{% if not forloop.last %}, {% endif %}
+                                                            {{ option.option_text }}{% if not forloop.last %}, {% endif %}
                                                         {% endif %}
                                                     {% endfor %}
                                                 </p>
@@ -225,9 +227,9 @@
                                         {% if dropdown_options %}
                                             {% for item_id, options in dropdown_options.items %}
                                                 <p><strong>Dropdown Field {{ item_id }}:</strong>
-                                                    {% for option_id, option_text in options.items %}
-                                                        {% if user_answer.selected_answer|get_item:item_id == option_text %}
-                                                            {{ option_text }}{% if not forloop.last %}, {% endif %}
+                                                    {% for option_id, option in options.items %}
+                                                        {% if option.option_text == user_answer.selected_answer|get_item:item_id %}
+                                                            {{ option.option_text }}{% if not forloop.last %}, {% endif %}
                                                         {% endif %}
                                                     {% endfor %}
                                                 </p>
@@ -240,9 +242,9 @@
                                         {% if dropdown_options %}
                                             {% for item_id, options in dropdown_options.items %}
                                                 <p><strong>Dropdown Field {{ item_id }}:</strong>
-                                                    {% for option_id, option_text in options.items %}
+                                                    {% for option_id, option in options.items %}
                                                         {% if option.is_correct %}
-                                                            {{ option_text }}{% if not forloop.last %}, {% endif %}
+                                                            {{ option.option_text }}{% if not forloop.last %}, {% endif %}
                                                         {% endif %}
                                                     {% endfor %}
                                                 </p>
@@ -251,7 +253,8 @@
                                     {% endwith %}
                                 </div>
                             {% endif %}
-                        {% endif %}      
+                        {% endif %}
+   
                     
 
             </div>

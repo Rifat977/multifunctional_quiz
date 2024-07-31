@@ -184,10 +184,9 @@ def submit_answer(request):
                 elif question.question_type == 'multiple_choice':
                     selected_answer = request.POST.getlist(f'option_{question_id}[]')
                 elif question.question_type == 'drag_and_drop':
-                    # Custom handling for drag and drop, collect selected options
-                    selected_answer = []  # Assume this will be a list of option ids or text
+                    selected_answer = request.POST.get(f'drag_and_drop_{question_id}')
+                    selected_answer = selected_answer.split(',') if selected_answer else []
                 elif question.question_type == 'dropdown':
-                    # Custom handling for dropdown, collect selected options for each dropdown item
                     selected_answer = {}
                     for item in question.dropdownquestion.dropdown_items.all():
                         selected_answer[item.id] = request.POST.get(f'dropdown_{item.id}')
@@ -206,13 +205,49 @@ def submit_answer(request):
                     )
                     if set(selected_answer) == correct_options:
                         is_correct = True
+                
+                
                 elif question.question_type == 'drag_and_drop':
-                    # Check if the drag and drop options are in the correct position
+                    # Retrieve correct options
                     correct_options = DragAndDropQuestion.objects.get(pk=question_id).options.filter(is_correct_position=True)
-                    selected_option_texts = [DragAndDropOption.objects.get(pk=opt_id).option_text for opt_id in selected_answer]
+                    
+                    # Collect correct option texts
                     correct_option_texts = [opt.option_text for opt in correct_options]
-                    if selected_option_texts == correct_option_texts:
-                        is_correct = True
+
+                    
+                    print(f"Correct option texts: {correct_option_texts}")
+                    
+                    # Collect selected option texts from POST data
+                    selected_option_texts = []
+                    
+                    for key, value in request.POST.items():
+                        if key.startswith('drag_and_drop_'):
+                            question_number = key.split('_')[-1]
+                            if int(question_number) == int(question_id):
+                                try:
+                                    selected_option_ids = json.loads(value)
+                                    
+                                    for opt_id in selected_option_ids:
+                                        opt_id = int(opt_id)
+                                        option = get_object_or_404(DragAndDropOption, pk=opt_id)
+                                        selected_option_texts.append(option.option_text)
+                                        
+                                except (ValueError, json.JSONDecodeError) as e:
+                                    print(f"Error processing drag and drop answers for key '{key}': {e}")
+                    
+                    print(f"Selected option texts: {selected_option_texts}")
+                    
+                    # Compare selected option texts with correct option texts
+                    # Assuming order does not matter
+                    is_correct = sorted(selected_option_texts) == sorted(correct_option_texts)
+                    
+                    if is_correct:
+                        print("The selected answers are correct.")
+                    else:
+                        print("The selected answers are incorrect.")
+
+
+                        
                 elif question.question_type == 'dropdown':
                     correct = True
                     for item_id, selected_opt in selected_answer.items():
@@ -256,7 +291,6 @@ def submit_answer(request):
 
     return redirect("core:home")
 
-import ast
 
 @login_required
 def show_user_answers(request, user_attempt_id):
@@ -295,7 +329,22 @@ def show_user_answers(request, user_attempt_id):
             drag_and_drop_options[question.pk] = question_instance.options.all()
 
             correct_options = question_instance.options.filter(is_correct_position=True)
-            selected_option_texts = [DragAndDropOption.objects.get(pk=opt_id).option_text for opt_id in selected_option_ids]
+
+            cleaned_ids = []
+            for opt_id in selected_option_ids:
+                cleaned_id = opt_id.strip('[]')
+                cleaned_ids.extend(map(int, cleaned_id.split(',')))
+
+
+            selected_option_texts = []
+            for opt_id in cleaned_ids:
+                try:
+                    option = DragAndDropOption.objects.get(pk=opt_id)
+                    selected_option_texts.append(option.option_text)
+                except DragAndDropOption.DoesNotExist:
+                    print(f"Option with ID {opt_id} does not exist.")
+
+
             correct_option_texts = [opt.option_text for opt in correct_options]
             is_correct = selected_option_texts == correct_option_texts
 
@@ -306,10 +355,23 @@ def show_user_answers(request, user_attempt_id):
             options = DropDownOption.objects.filter(dropdown_item__in=drop_down_items)
 
             # Structuring the dictionary to have dropdown items and their options
+            # drop_down_options[question.pk] = {}
+            # for item in drop_down_items:
+            #     item_options = options.filter(dropdown_item=item)
+            #     drop_down_options[question.pk][item.id] = {option.id: option.option_text for option in item_options}
+
             drop_down_options[question.pk] = {}
             for item in drop_down_items:
                 item_options = options.filter(dropdown_item=item)
-                drop_down_options[question.pk][item.id] = {option.id: option.option_text for option in item_options}
+                
+                drop_down_options[question.pk][item.id] = {
+                    option.id: {
+                        'option_text': option.option_text,
+                        'is_correct': option.is_correct
+                    }
+                    for option in item_options
+                }
+
 
             correct = True
             for item_id, selected_opt in selected_answers.items():
