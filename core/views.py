@@ -256,6 +256,8 @@ def submit_answer(request):
 
     return redirect("core:home")
 
+import ast
+
 @login_required
 def show_user_answers(request, user_attempt_id):
     user_attempt = get_object_or_404(UserAttempt, pk=user_attempt_id, user=request.user)
@@ -270,6 +272,9 @@ def show_user_answers(request, user_attempt_id):
     subject_name = user_attempt.question_pattern.subject.name
     course_tier = user_attempt.question_pattern.tier
     points_for_each = user_attempt.question_pattern.points
+
+    drop_down_options = {}
+    drag_and_drop_options = {}
 
     for user_answer in user_answers:
         question = user_answer.question
@@ -286,14 +291,27 @@ def show_user_answers(request, user_attempt_id):
 
         elif question.question_type == 'drag_and_drop':
             selected_option_ids = ast.literal_eval(user_answer.selected_answer) if isinstance(user_answer.selected_answer, str) else user_answer.selected_answer
-            correct_options = DragAndDropQuestion.objects.get(pk=question.pk).options.filter(is_correct_position=True)
+            question_instance = DragAndDropQuestion.objects.get(pk=question.pk)
+            drag_and_drop_options[question.pk] = question_instance.options.all()
+
+            correct_options = question_instance.options.filter(is_correct_position=True)
             selected_option_texts = [DragAndDropOption.objects.get(pk=opt_id).option_text for opt_id in selected_option_ids]
             correct_option_texts = [opt.option_text for opt in correct_options]
             is_correct = selected_option_texts == correct_option_texts
 
         elif question.question_type == 'dropdown':
-            correct = True
             selected_answers = ast.literal_eval(user_answer.selected_answer) if isinstance(user_answer.selected_answer, str) else user_answer.selected_answer
+            question_instance = DropDownQuestion.objects.get(pk=question.pk)
+            drop_down_items = DropDownItem.objects.filter(question=question_instance)
+            options = DropDownOption.objects.filter(dropdown_item__in=drop_down_items)
+
+            # Structuring the dictionary to have dropdown items and their options
+            drop_down_options[question.pk] = {}
+            for item in drop_down_items:
+                item_options = options.filter(dropdown_item=item)
+                drop_down_options[question.pk][item.id] = {option.id: option.option_text for option in item_options}
+
+            correct = True
             for item_id, selected_opt in selected_answers.items():
                 try:
                     correct_option = DropDownOption.objects.get(dropdown_item__id=item_id, is_correct=True)
@@ -324,6 +342,8 @@ def show_user_answers(request, user_attempt_id):
         'subject_name': subject_name,
         'course_tier': course_tier,
         'points_for_each': points_for_each,
+        'drop_down_options': drop_down_options,
+        'drag_and_drop_options': drag_and_drop_options,
     }
 
     return render(request, 'user/attempt_answer.html', context)

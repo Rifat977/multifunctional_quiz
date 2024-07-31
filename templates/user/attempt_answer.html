@@ -25,7 +25,7 @@
     <div class="col-md-6 mb-4">
         <div class="card shadow">
             <div class="card-body">
-                <p class="mb-2"><strong>{{ user_answer.question.question_text }}</strong></p>
+                <p class="mb-2"><strong>{{ user_answer.question.singlechoicequestion.question_text }}</strong></p>
                 {% if user_answer.question.question_type == 'single_choice' %}
                     {% for option in user_answer.question.singlechoicequestion.options.all %}
                         <div class="custom-control custom-radio">
@@ -41,6 +41,7 @@
                     {% endfor %}
                 
                 {% elif user_answer.question.question_type == 'multiple_choice' %}
+                <p class="mb-2"><strong>{{ user_answer.question.multiplechoicequestion.question_text }}</strong></p>
                     {% for option in user_answer.question.multiplechoicequestion.options.all %}
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" id="option_{{ user_answer.question.id }}_{{ option.id }}" value="{{ option.option_text }}"
@@ -55,65 +56,209 @@
                     {% endfor %}
                 
                     {% elif user_answer.question.question_type == 'drag_and_drop' %}
+                        <p class="mb-2"><strong>{{ user_answer.question.draganddropquestion.question_text }}</strong></p>
+                        <p class="mb-2"><strong>{{ user_answer.question.draganddropquestion.sentence_to_complete }}</strong></p>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card mt-3">
                                     <div class="card-body">
                                         <h6 class="card-title">Selected Options</h6>
-                                        {% for option in drag_and_drop_options %}
-                                            {% if option.id in user_answer.selected_answer %}
-                                                <p>{{ option.option_text }}</p>
+                                        {% with drag_and_drop_options=drag_and_drop_options|get_item:user_answer.question.pk %}
+                                            {% if drag_and_drop_options %}
+                                                {% for option in drag_and_drop_options %}
+                                                    {% if option.id|stringformat:"s" in user_answer.selected_answer %}
+                                                        <p>{{ option.option_text }}</p>
+                                                    {% else %}
+                                                        <p>{{ option.option_text }}</p>
+                                                    {% endif %}
+                                                {% endfor %}
                                             {% else %}
-                                                <p>Option ID {{ option.id }} not in selected_answer: {{ user_answer.selected_answer }}</p>
+                                                <p>No drag-and-drop options available for this question.</p>
                                             {% endif %}
-                                        {% endfor %}
+                                        {% endwith %}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    {% elif user_answer.question.question_type == 'dropdown' %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card mt-3">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Selected Options</h6>
-                                        {% for item_id, selected_opt in user_answer.selected_answer.items %}
-                                            {% for option in drop_down_options %}
-                                                {% if option.id|stringformat:"d" == item_id|stringformat:"d" %}
-                                                    <p>{{ option.option_text }} - Selected: {{ selected_opt }}</p>
+
+                        {% elif user_answer.question.question_type == 'dropdown' %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="mb-2"><strong>{{ user_answer.question.dropdownquestion.question_text }}</strong></p>
+                                    <div class="card mt-3">
+                                        <div class="card-body">
+                                            <!-- Display all dropdown items in <select> elements -->
+                                            {% with dropdown_options=drop_down_options|get_item:user_answer.question.pk %}
+                                                {% if dropdown_options %}
+                                                    {% for item_id, options in dropdown_options.items %}
+                                                        <p><strong>Dropdown Field {{ item_id }}:</strong></p>
+                                                        <select class="form-control">
+                                                            {% for option_id, option_text in options.items %}
+                                                                <option value="{{ option_id }}" {% if user_answer.selected_answer|get_item:item_id == option_text %}selected{% endif %}>
+                                                                    {{ option_text }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    {% endfor %}
                                                 {% else %}
-                                                    <p>Option ID {{ option.id }} not matching item_id {{ item_id }} in selected_answer: {{ user_answer.selected_answer }}</p>
+                                                    <p>No dropdown options available.</p>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+    
+                
+                        {% if user_answer.question.question_type == 'single_choice' %}
+                            {% if user_answer.is_correct %}
+                                <div class="alert alert-success mt-3" role="alert">
+                                    Correct Answer: {{ user_answer.selected_answer }}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger mt-3" role="alert">
+                                    Your Answer: {{ user_answer.selected_answer }}<br>
+                                    Correct Answer: 
+                                    {% for option in user_answer.question.singlechoicequestion.options.all %}
+                                        {% if option.is_correct %}
+                                            {{ option.option_text }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if user_answer.question.question_type == 'multiple_choice' %}
+                            {% if user_answer.is_correct %}
+                                <div class="alert alert-success mt-3" role="alert">
+                                    Correct Answers: 
+                                    {% for option in user_answer.question.multiplechoicequestion.options.all %}
+                                        {% if option.is_correct %}
+                                            {{ option.option_text }}{% if not forloop.last %}, {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger mt-3" role="alert">
+                                    Your Answers: 
+                                    {% for option in user_answer.question.multiplechoicequestion.options.all %}
+                                        {% if option.option_text in user_answer.selected_answer %}
+                                            {{ option.option_text }}{% if not forloop.last %}, {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <br>
+                                    Correct Answers: 
+                                    {% for option in user_answer.question.multiplechoicequestion.options.all %}
+                                        {% if option.is_correct %}
+                                            {{ option.option_text }}{% if not forloop.last %}, {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if user_answer.question.question_type == 'drag_and_drop' %}
+                            {% if user_answer.is_correct %}
+                                <div class="alert alert-success mt-3" role="alert">
+                                    Correct Answers: 
+                                    {% with drag_and_drop_options=drag_and_drop_options|get_item:user_answer.question.pk %}
+                                        {% if drag_and_drop_options %}
+                                            {% for option in drag_and_drop_options %}
+                                                {% if option.is_correct_position %}
+                                                    {{ option.option_text }}{% if not forloop.last %}, {% endif %}
                                                 {% endif %}
                                             {% endfor %}
-                                        {% endfor %}
-                                    </div>
+                                        {% endif %}
+                                    {% endwith %}
                                 </div>
-                            </div>
-                        </div>
-                    {% endif %}
+                            {% else %}
+                                <div class="alert alert-danger mt-3" role="alert">
+                                    Your Selected Options: 
+                                    {% with drag_and_drop_options=drag_and_drop_options|get_item:user_answer.question.pk %}
+                                        {% if drag_and_drop_options %}
+                                            {% for option in drag_and_drop_options %}
+                                                {% if option.id|stringformat:"s" in user_answer.selected_answer %}
+                                                    {{ option.option_text }}{% if not forloop.last %}, {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endwith %}
+                                    <br>
+                                    Correct Answers: 
+                                    {% with drag_and_drop_options=drag_and_drop_options|get_item:user_answer.question.pk %}
+                                        {% if drag_and_drop_options %}
+                                            {% for option in drag_and_drop_options %}
+                                                {% if option.is_correct_position %}
+                                                    {{ option.option_text }}{% if not forloop.last %}, {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        
+
+                        {% if user_answer.question.question_type == 'dropdown' %}
+                            {% if user_answer.is_correct %}
+                                <div class="alert alert-success mt-3" role="alert">
+                                    Correct Answers:
+                                    {% with dropdown_options=drop_down_options|get_item:user_answer.question.pk %}
+                                        {% if dropdown_options %}
+                                            {% for item_id, options in dropdown_options.items %}
+                                                <p><strong>Dropdown Field {{ item_id }}:</strong>
+                                                    {% for option_id, option_text in options.items %}
+                                                        {% if option.is_correct %}
+                                                            {{ option_text }}{% if not forloop.last %}, {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </p>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger mt-3" role="alert">
+                                    Your Selected Answers:
+                                    {% with dropdown_options=drop_down_options|get_item:user_answer.question.pk %}
+                                        {% if dropdown_options %}
+                                            {% for item_id, options in dropdown_options.items %}
+                                                <p><strong>Dropdown Field {{ item_id }}:</strong>
+                                                    {% for option_id, option_text in options.items %}
+                                                        {% if user_answer.selected_answer|get_item:item_id == option_text %}
+                                                            {{ option_text }}{% if not forloop.last %}, {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </p>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endwith %}
+                                    <br>
+                                    Correct Answers:
+                                    {% with dropdown_options=drop_down_options|get_item:user_answer.question.pk %}
+                                        {% if dropdown_options %}
+                                            {% for item_id, options in dropdown_options.items %}
+                                                <p><strong>Dropdown Field {{ item_id }}:</strong>
+                                                    {% for option_id, option_text in options.items %}
+                                                        {% if option.is_correct %}
+                                                            {{ option_text }}{% if not forloop.last %}, {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </p>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            {% endif %}
+                        {% endif %}      
                     
-                
-                
-                {% if user_answer.selected_answer %}
-                    {% if user_answer.is_correct %}
-                        <div class="alert alert-success mt-3" role="alert">
-                            Correct Answer: {{ user_answer.selected_answer }}
-                        </div>
-                    {% else %}
-                        <div class="alert alert-danger mt-3" role="alert">
-                            Your Answer: {{ user_answer.selected_answer }}<br>
-                            Correct Answer: {{ user_answer.question.correct_answer }}
-                        </div>
-                    {% endif %}
-                {% else %}
-                    <div class="alert alert-warning mt-3" role="alert">
-                        Skipped
-                    </div>
-                {% endif %}
+
             </div>
         </div>
     </div>
     {% endfor %}
+
 </div>
 
 <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
