@@ -6,6 +6,7 @@ from .models import *
 from django.contrib import messages
 
 import json, random, ast
+from collections import Counter
 
 from itertools import groupby
 from django.db.models import F, Count, Q
@@ -319,9 +320,39 @@ def show_user_answers(request, user_attempt_id):
             is_correct = correct_option and user_answer.selected_answer == correct_option.option_text
 
         elif question.question_type == 'multiple_choice':
-            correct_options = set(MultipleChoiceQuestion.objects.get(pk=question.pk).options.filter(is_correct=True).values_list('option_text', flat=True))
-            selected_answers = set(user_answer.selected_answer) if isinstance(user_answer.selected_answer, list) else set()
-            is_correct = selected_answers == correct_options
+            # Fetch correct options and convert to a list
+            correct_options = list(MultipleChoiceQuestion.objects.get(pk=question.pk)
+                                .options.filter(is_correct=True)
+                                .values_list('option_text', flat=True))
+            
+            # Convert `selected_answers` to a list if it is not already
+            if isinstance(user_answer.selected_answer, str):
+                try:
+                    # Safely evaluate string to list
+                    selected_answers = ast.literal_eval(user_answer.selected_answer)
+                    if not isinstance(selected_answers, list):
+                        selected_answers = []
+                except (ValueError, SyntaxError):
+                    selected_answers = []
+            elif isinstance(user_answer.selected_answer, list):
+                selected_answers = user_answer.selected_answer
+            else:
+                # Handle other cases, possibly converting to an empty list
+                selected_answers = []
+
+            # Use Counter to count occurrences and compare
+            correct_options_counter = Counter(correct_options)
+            selected_answers_counter = Counter(selected_answers)
+
+            # Check if both Counters are equal
+            is_correct = correct_options_counter == selected_answers_counter
+            
+            print(selected_answers, correct_options)
+            print(is_correct)
+
+
+
+
 
         elif question.question_type == 'drag_and_drop':
             selected_option_ids = ast.literal_eval(user_answer.selected_answer) if isinstance(user_answer.selected_answer, str) else user_answer.selected_answer
@@ -388,8 +419,8 @@ def show_user_answers(request, user_attempt_id):
         if is_correct:
             total_correct_answers += 1
             total_points += points_for_each
-        elif not user_answer.selected_answer:
-            total_skipped_answers += 1
+        # elif not user_answer.selected_answer:
+        #     total_skipped_answers += 1
         else:
             total_wrong_answers += 1
 
