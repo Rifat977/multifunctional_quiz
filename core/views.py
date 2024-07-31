@@ -445,7 +445,7 @@ def show_user_answers(request, user_attempt_id):
 @login_required
 def wallet(request):
     user = request.user
-    per_point = PointSetting.objects.first()
+    per_point = get_object_or_404(PointSetting)
     total_amount = per_point.per_point * user.point
     withdrawals = Withdrawal.objects.filter(user=user).order_by('-id')
 
