@@ -10,7 +10,13 @@
       <div class="th-mobile-menu">
           <ul>
               <li>
-                  <a href="index.html">Home</a>
+                  <a href="{% url 'core:index' %}">Home</a>
+              </li>
+              <li>
+                <a href="{% url 'account:login' %}">Login</a>
+              </li>
+              <li>
+                <a href="{% url 'account:register' %}">Register</a>
               </li>
               <li><a href="contact.html">Contact</a></li>
           </ul>
