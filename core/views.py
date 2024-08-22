@@ -500,3 +500,6 @@ def withdrawal(request):
 
 def quiz_test(request):
     return render(request, 'user/quiz_test.html')
+
+def about(request):
+    return render(request, 'about.html')

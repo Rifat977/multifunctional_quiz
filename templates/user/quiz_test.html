@@ -109,14 +109,14 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-4">
                                             {% for option in question.draganddropquestion.options.all %}
-                                            <div class="option-label" draggable="true" id="{{ option.id }}" data-option-id="{{ option.id }}">{{ option.option_text }}</div>
+                                            <div class="option-label border-dark" draggable="true" id="{{ option.id }}" data-option-id="{{ option.id }}">{{ option.option_text }}</div>
                                             {% endfor %}
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-8">
                                             <div class="card mt-3">
-                                                <div class="card-body">
+                                                <div class="card-body" style="background-color: rgba(255, 97, 97, 0.37); border-radius: 10px;">
                                                     <h6 class="card-title">Incorrect Words</h6>
                                                     <div class="incorrect-box drag-drop-zone" data-item-id="" id="incorrectBox{{ forloop.counter }}"></div>
                                                 </div>
