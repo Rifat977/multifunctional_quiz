@@ -57,6 +57,8 @@
 </style>
 {% endblock %}
 
+{% load custom_filters %}
+
 {% block content %}
 
 <div class="row">
@@ -156,19 +158,9 @@
                                             <label class="form-check-label" for="option{{ forloop.counter }}">{{ option.option_text }}</label>
                                         </div>
                                     {% endfor %}
-                                {% elif question.question_type == 'dropdown' %}
-                                    <p class="mb-2"><strong>{{ question.dropdownquestion.question_text }}</strong></p>
-                                    <p class="mb-2">
-                                        {% for item in question.dropdownquestion.dropdown_items.all %}
-                                            <select name="dropdown_{{ item.id }}" class="form-control" style="width: auto; display: inline-block;">
-                                                <option value="">Select Answer for {{item.id}}</option>
-                                                {% for option in item.options.all %}
-                                                    <option value="{{ option.option_text }}">{{ option.option_text }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        {% endfor %}
-                                    </p> 
-                                {% endif %}
+                                    {% elif question.question_type == 'dropdown' %}
+                                        <p class="mb-2"><strong>{{ question.dropdownquestion.question_text|replace_underscores_with_dropdown:question.dropdownquestion.dropdown_items.all|safe }}</strong></p>
+                                    {% endif %}
                             </div>
                         </div>
                     </div>
@@ -263,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var html = '';
         words.forEach(function(word, index) {
             if (word === '____') {
-                html += `<span class="drag-drop-zone" id="dragDropZone${index + 1}" data-answer="">____</span> `;
+                html += `<span class="drag-drop-zone" draggable="true" id="dragDropZone${index + 1}" data-answer="">____</span> `;
             } else {
                 html += `<span>${word}</span> `;
             }
@@ -324,7 +316,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     draggedElement.style.display = 'none';
 
                     // Allow item to be returned to original position on click
-                    zone.addEventListener('click', function() {
+                    zone.addEventListener('dragend', function() {
                         if (zone.dataset.itemId) {
                             var item = document.getElementById(zone.dataset.itemId);
                             item.style.display = 'inline-block';
@@ -362,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 draggedElement.style.display = 'inline-block';
 
                 // Allow item to be returned to original position on click
-                draggedElement.addEventListener('click', function() {
+                draggedElement.addEventListener('dragstart', function() {
                     originalPositions[draggedElement.id].appendChild(draggedElement);
                 });
             });
@@ -651,7 +643,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     });
-    </script>
 
-{% endblock %} {% endcomment %}
+</script>
+
+{% endcomment %}
 {% endblock %}
