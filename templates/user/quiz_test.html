@@ -61,7 +61,7 @@
 
 {% block content %}
 
-<div class="row">
+<div class="row" id="quiz_page">
     <div class="col-md-4 col-12">
         <div class="card">
             <div class="card-body">
@@ -175,8 +175,7 @@
                     </div>
                 </div>
             </div>            
-        </form>
-        
+        </form>        
     </div>
 </div>
 
@@ -184,7 +183,21 @@
 
 {% block script %}
 <script>
+
+document.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I')) {
+        event.preventDefault();
+    }
+});
+
+
+
 document.addEventListener("DOMContentLoaded", function() {
+
     var nextButton = document.getElementById('nextButton');
     var previousButton = document.getElementById('previousButton');
 
