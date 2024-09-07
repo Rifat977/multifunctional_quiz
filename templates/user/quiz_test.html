@@ -54,129 +54,181 @@
         min-height: 50px;
         margin-bottom: 10px;
     }
+
+    body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .full-page {
+        height: 85vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #quiz_page {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-body {
+        overflow-y: auto;
+        max-height: 100%;
+    }
+
+    .fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+
 </style>
 {% endblock %}
 
 {% load custom_filters %}
+{% load static %}
 
 {% block content %}
 
-<div class="row" id="quiz_page">
-    <div class="col-md-4 col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="col-12 text-center">
-                    <h2 class="page-title">{{ q_pattern.subject.name }} ({{ q_pattern.subject.course.name }})</h2>
-                    <p class="">Tier: <span class="text-success">{{ q_pattern.tier|upper }}</span></p>
-                    <p class="">Point For Each Correct Answer: {{ q_pattern.points }}</p>
-                </div>
-                <ul class="nav flex-column nav-pills" id="questionTab" role="tablist">
-                    <div class="row justify-content-center text-center">
-                        {% for question in questions %}
-                            <div class="col-2">
-                                <li class="nav-item">
-                                    <a style="padding: 3px; background-color: #3ad2a1; color: #ffffff; border: 1px solid none;" class="nav-link font-weight-bold {% if forloop.first %}active{% endif %}" id="questionTab{{ forloop.counter }}-tab" data-toggle="pill" href="#question{{ forloop.counter }}" role="tab" aria-controls="question{{ forloop.counter }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ forloop.counter }}</a>
-                                </li>
-                            </div>
-                        {% endfor %}                      
-                    </div>
-                </ul>
-            </div>
+<button id="fullscreenButton" class="btn btn-primary">Start Quiz</button>
+
+<div class="p-3" style="background-color: #0018a9; border-radius: 8px; display: none;" id="quiz_page">
+
+        <div class="mb-2 d-flex">
+            <img src="{% static '/logo/londonseru_logo.jpeg' %}" style="height:35px" alt="" srcset="">
+            <p class="mt-2 ml-2" style="color: #ffffff;">21 sep 2025</p>
         </div>
-    </div>
-    <div class="col-md-8 col-12">
-        <form id="quizForm" action="{% url 'core:submit_answer' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="q_pattern" value="{{ q_pattern.id }}">
-            <div class="tab-content" id="questionTabContent">
-                {% for question in questions %}
-                    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="question{{ forloop.counter }}" role="tabpanel" aria-labelledby="questionTab{{ forloop.counter }}-tab">
-                        <input type="hidden" name="question_{{ forloop.counter }}" value="{{ question.id }}">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                {% if question.question_type == 'drag_and_drop' %}
-                                    <input type="hidden" name="drag_and_drop_{{ question.id }}" id="dragAndDropAnswer{{ question.id }}">
-                                    <p class="mb-2"><strong>{{ question.draganddropquestion.question_text }}</strong></p>
-                                    <div class="row mb-3">
-                                        <div class="col-10">
-                                            <p class="mb-2">
-                                                <strong class="sentence-to-complete" id="sentence{{ forloop.counter }}">
-                                                    {{ question.draganddropquestion.sentence_to_complete }}
-                                                </strong>
-                                            </p>
-                                        </div>
-                                        <div class="col-2">
-                                            <i class="fe fe-clock fe-16"></i>
-                                            <span id="timer{{ forloop.counter }}"></span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            {% for option in question.draganddropquestion.options.all %}
-                                            <div class="option-label border-dark" draggable="true" id="{{ option.id }}" data-option-id="{{ option.id }}">{{ option.option_text }}</div>
-                                            {% endfor %}
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="card mt-3">
-                                                <div class="card-body" style="background-color: rgba(255, 97, 97, 0.37); border-radius: 10px;">
-                                                    <h6 class="card-title">Incorrect Words</h6>
-                                                    <div class="incorrect-box drag-drop-zone" data-item-id="" id="incorrectBox{{ forloop.counter }}"></div>
+
+    <form id="quizForm" action="{% url 'core:submit_answer' %}" method="post">
+    {% csrf_token %}
+
+
+        <div class="">
+            <div class="">
+                <div class="col-12" style="display: none;">
+                    <ul class="nav flex-column nav-pills" id="questionTab" role="tablist">
+                        <div class="row justify-content-center text-center">
+                            {% for question in questions %}
+                                <div class="col-2">
+                                    <li class="nav-item">
+                                        <a style="padding: 3px; background-color: #0018a9; color: #ffffff; border: 1px solid none;" class="nav-link font-weight-bold {% if forloop.first %}active{% endif %}" id="questionTab{{ forloop.counter }}-tab" data-toggle="pill" href="#question{{ forloop.counter }}" role="tab" aria-controls="question{{ forloop.counter }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ forloop.counter }}</a>
+                                    </li>
+                                </div>
+                            {% endfor %}                      
+                        </div>
+                    </ul>
+                </div>
+                <div class="col-12">
+                    <input type="hidden" name="q_pattern" value="{{ q_pattern.id }}">
+                    <div class="tab-content" id="questionTabContent">
+                        {% for question in questions %}
+                            <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="question{{ forloop.counter }}" role="tabpanel" aria-labelledby="questionTab{{ forloop.counter }}-tab">
+                                <input type="hidden" name="question_{{ forloop.counter }}" value="{{ question.id }}">
+                                <div class="card full-page">
+                                    <div class="card-body">
+                                        <p class="mb-2">
+                                            <strong>Question {{ forloop.counter }} of {{ questions|length }}:</strong>
+                                        </p>
+                                        {% if question.question_type == 'drag_and_drop' %}
+                                            <input type="hidden" name="drag_and_drop_{{ question.id }}" id="dragAndDropAnswer{{ question.id }}">
+                                            <p class="mb-2"><strong>{{ question.draganddropquestion.question_text }}</strong></p>
+                                            <div class="row mb-3">
+                                                <div class="col-10">
+                                                    <p class="mb-2">
+                                                        <strong class="sentence-to-complete" id="sentence{{ forloop.counter }}">
+                                                            {{ question.draganddropquestion.sentence_to_complete }}
+                                                        </strong>
+                                                    </p>
+                                                </div>
+                                                <div class="col-2">
+                                                    <i class="fe fe-clock fe-16"></i>
+                                                    <span id="timer{{ forloop.counter }}"></span>
                                                 </div>
                                             </div>
-                                        </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    {% for option in question.draganddropquestion.options.all %}
+                                                    <div class="option-label border-dark" draggable="true" id="{{ option.id }}" data-option-id="{{ option.id }}">{{ option.option_text }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="card mt-3">
+                                                        <div class="card-body" style="background-color: rgba(255, 97, 97, 0.37); border-radius: 10px;">
+                                                            <h6 class="card-title">Incorrect Words</h6>
+                                                            <div class="incorrect-box drag-drop-zone" data-item-id="" id="incorrectBox{{ forloop.counter }}"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                        {% elif question.question_type == 'multiple_choice' %}
+                                            <div class="row mb-3">
+                                                <div class="col-10">
+                                                    <p class="mb-2"><strong>{{ question.multiplechoicequestion.question_text }}</strong></p>
+                                                </div>
+                                                <div class="col-2">
+                                                    <i class="fe fe-clock fe-16"></i>
+                                                    <span id="timer{{ forloop.counter }}"></span>
+                                                </div>
+                                            </div>
+                                            {% for option in question.multiplechoicequestion.options.all %}
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="option_{{ question.id }}[]" id="option{{ forloop.counter }}" value="{{ option }}">
+                                                    <label class="form-check-label" for="option{{ forloop.counter }}">{{ option }}</label>
+                                                </div>
+                                            {% endfor %}
+                                        {% elif question.question_type == 'single_choice' %}
+                                            <div class="row mb-3">
+                                                <div class="col-10">
+                                                    <p class="mb-2"><strong>{{ question.singlechoicequestion.question_text }}</strong></p>
+                                                </div>
+                                                <div class="col-2">
+                                                    <i class="fe fe-clock fe-16"></i>
+                                                    <span id="timer{{ forloop.counter }}"></span>
+                                                </div>
+                                            </div>
+                                            {% for option in question.singlechoicequestion.options.all %}
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="option_{{ question.id }}" id="option{{ forloop.counter }}" value="{{ option.option_text }}">
+                                                    <label class="form-check-label" for="option{{ forloop.counter }}">{{ option.option_text }}</label>
+                                                </div>
+                                            {% endfor %}
+                                            {% elif question.question_type == 'dropdown' %}
+                                                <p class="mb-2"><strong>{{ question.dropdownquestion.question_text|replace_underscores_with_dropdown:question.dropdownquestion.dropdown_items.all|safe }}</strong></p>
+                                            {% endif %}
                                     </div>
-
-                                {% elif question.question_type == 'multiple_choice' %}
-                                    <div class="row mb-3">
-                                        <div class="col-10">
-                                            <p class="mb-2"><strong>{{ question.multiplechoicequestion.question_text }}</strong></p>
-                                        </div>
-                                        <div class="col-2">
-                                            <i class="fe fe-clock fe-16"></i>
-                                            <span id="timer{{ forloop.counter }}"></span>
-                                        </div>
-                                    </div>
-                                    {% for option in question.multiplechoicequestion.options.all %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="option_{{ question.id }}[]" id="option{{ forloop.counter }}" value="{{ option }}">
-                                            <label class="form-check-label" for="option{{ forloop.counter }}">{{ option }}</label>
-                                        </div>
-                                    {% endfor %}
-                                {% elif question.question_type == 'single_choice' %}
-                                    <div class="row mb-3">
-                                        <div class="col-10">
-                                            <p class="mb-2"><strong>{{ question.singlechoicequestion.question_text }}</strong></p>
-                                        </div>
-                                        <div class="col-2">
-                                            <i class="fe fe-clock fe-16"></i>
-                                            <span id="timer{{ forloop.counter }}"></span>
-                                        </div>
-                                    </div>
-                                    {% for option in question.singlechoicequestion.options.all %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="option_{{ question.id }}" id="option{{ forloop.counter }}" value="{{ option.option_text }}">
-                                            <label class="form-check-label" for="option{{ forloop.counter }}">{{ option.option_text }}</label>
-                                        </div>
-                                    {% endfor %}
-                                    {% elif question.question_type == 'dropdown' %}
-                                        <p class="mb-2"><strong>{{ question.dropdownquestion.question_text|replace_underscores_with_dropdown:question.dropdownquestion.dropdown_items.all|safe }}</strong></p>
-                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- <div class="col-12 text-center mt-3">
+                        <div class="card">
+                            <div class="card-body d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary text-dark" id="previousButton" disabled>Previous</button>
+                                <button type="button" class="btn btn-outline-secondary text-dark" id="nextButton">Next</button>
+                                <button type="submit" class="btn" style="background-color: #0018a9;">Submit Quiz</button>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-            </div>
-            <div class="col-12 text-center mt-3">
-                <div class="card">
-                    <div class="card-body d-flex justify-content-between">
-                        <button type="button" class="btn btn-outline-secondary text-dark" id="previousButton" disabled>Previous</button>
-                        <button type="button" class="btn btn-outline-secondary text-dark" id="nextButton">Next</button>
-                        <button type="submit" class="btn btn-success text-light">Submit Quiz</button>
-                    </div>
+                    </div>             -->
                 </div>
-            </div>            
-        </form>        
-    </div>
+            </div>
+        </div>
+
+        <div class="fixed-bottom p-3 bg-white" style="box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary text-dark" id="previousButton" disabled>Previous</button>
+                <button type="button" class="btn btn-outline-secondary text-dark" id="nextButton">Next</button>
+                <button type="submit" class="btn" style="background-color: #0018a9; color:white">Submit Quiz</button>
+            </div>
+        </div>
+
+    </form>        
+
+
+
 </div>
 
 {% endblock %}
@@ -189,15 +241,74 @@ document.addEventListener('contextmenu', function(event) {
 });
 
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I')) {
+    if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I') || event.key === '93' || event.keyCode === 91 || event.keyCode === 92) {
         event.preventDefault();
     }
 });
 
 
+// document.body.classList.add('collapsed');
+// document.getElementById('collapseBtn').disabled = true;
+
 
 document.addEventListener("DOMContentLoaded", function() {
 
+    // Get the quiz page element and the fullscreen button
+    const element = document.getElementById('quiz_page');
+    const fullscreenButton = document.getElementById('fullscreenButton');
+    const questionContainer = document.getElementById('quiz_page');
+
+    // Attach the fullscreen request to the Start Quiz button click event
+    fullscreenButton.addEventListener('click', function (event) {
+        // Prevent form submission or default button behavior
+        event.preventDefault();
+
+        // Trigger fullscreen mode for the quiz page
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) { // For Firefox
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) { // For Chrome, Safari, and Opera
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) { // For IE/Edge
+            element.msRequestFullscreen();
+        }
+
+        // Start the quiz: show the question container and hide the Start Quiz button
+        questionContainer.style.display = "block";
+        fullscreenButton.style.display = "none";
+    });
+
+    // Listen for fullscreen change events (entering or exiting fullscreen)
+    document.addEventListener('fullscreenchange', function () {
+        if (!document.fullscreenElement) {
+            // If the user exits fullscreen, submit the quiz
+            quizForm.submit();
+        }
+    });
+
+    document.addEventListener('webkitfullscreenchange', function () {
+        if (!document.webkitFullscreenElement) {
+            // If the user exits fullscreen (webkit browsers), submit the quiz
+            quizForm.submit();
+        }
+    });
+
+    document.addEventListener('mozfullscreenchange', function () {
+        if (!document.mozFullScreenElement) {
+            // If the user exits fullscreen (Firefox), submit the quiz
+            quizForm.submit();
+        }
+    });
+
+    document.addEventListener('MSFullscreenChange', function () {
+        if (!document.msFullscreenElement) {
+            // If the user exits fullscreen (IE/Edge), submit the quiz
+            quizForm.submit();
+        }
+    });
+
+    
     var nextButton = document.getElementById('nextButton');
     var previousButton = document.getElementById('previousButton');
 
@@ -329,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     draggedElement.style.display = 'none';
 
                     // Allow item to be returned to original position on click
-                    zone.addEventListener('dragend', function() {
+                    zone.addEventListener('dragleave', function() {
                         if (zone.dataset.itemId) {
                             var item = document.getElementById(zone.dataset.itemId);
                             item.style.display = 'inline-block';
@@ -367,7 +478,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 draggedElement.style.display = 'inline-block';
 
                 // Allow item to be returned to original position on click
-                draggedElement.addEventListener('dragstart', function() {
+                draggedElement.addEventListener('dragleave', function() {
                     originalPositions[draggedElement.id].appendChild(draggedElement);
                 });
             });
@@ -590,26 +701,45 @@ document.addEventListener('DOMContentLoaded', function() {
             item.addEventListener('dragstart', function(event) {
                 event.dataTransfer.setData("text/plain", event.target.id);
             });
-    
+
             incorrectBox.addEventListener('dragover', function(event) {
                 event.preventDefault();
                 incorrectBox.classList.add('drag-over');
             });
-    
+
             incorrectBox.addEventListener('dragleave', function() {
                 incorrectBox.classList.remove('drag-over');
             });
-    
+
             incorrectBox.addEventListener('drop', function(event) {
                 event.preventDefault();
                 incorrectBox.classList.remove('drag-over');
-    
+
                 var data = event.dataTransfer.getData("text/plain");
                 var draggedElement = document.getElementById(data);
                 incorrectBox.appendChild(draggedElement);
             });
+            
+            // Allow drag from correct position to incorrect
+            correctBox.addEventListener('dragover', function(event) {
+                event.preventDefault();
+                correctBox.classList.add('drag-over');
+            });
+
+            correctBox.addEventListener('dragleave', function() {
+                correctBox.classList.remove('drag-over');
+            });
+
+            correctBox.addEventListener('drop', function(event) {
+                event.preventDefault();
+                correctBox.classList.remove('drag-over');
+
+                var data = event.dataTransfer.getData("text/plain");
+                var draggedElement = document.getElementById(data);
+                correctBox.appendChild(draggedElement);
+            });
         });
-    
+
         // Allow items to be moved back to their original position from the incorrect box
         incorrectBox.addEventListener('click', function(event) {
             var target = event.target;
@@ -618,7 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 originalPositions[target.id].appendChild(target);
             }
         });
-    
+
         // Allow items to be directly moved to the incorrect box from their original position
         draggableItems.forEach(function(item) {
             item.addEventListener('click', function() {
@@ -627,6 +757,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+
+        // Allow items to be moved to incorrect box from correct position and vice versa
+        draggableItems.forEach(function(item) {
+            item.addEventListener('dragleave', function() {
+                if (item.parentNode.classList.contains('correct-box')) {
+                    incorrectBox.appendChild(item);
+                } else if (item.parentNode.classList.contains('incorrect-box')) {
+                    correctBox.appendChild(item);
+                }
+            });
+        });
+
     
         // Tab switching logic
         var questionTabs = document.querySelectorAll('#questionTab a');

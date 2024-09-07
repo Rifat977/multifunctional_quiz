@@ -19,7 +19,12 @@ from django.core.mail import send_mail
 
 # Create your views here.
 def index(request):
-    return render(request, 'index.html')
+    
+    quizzes = QuestionPattern.objects.all()
+    
+    return render(request, 'index.html', {
+        'quizzes': quizzes,
+    })
 
 def policy(request):
     return render(request, 'policy.html')
