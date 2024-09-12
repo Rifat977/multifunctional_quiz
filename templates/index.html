@@ -166,33 +166,52 @@
 </div>
 
 <section class="space bg-smoke" id="course-sec">
-<div class="container">
-<div class="title-area text-center">
-  <h2 class="sec-title fw-medium">All Quizes</h2>
-</div>
-{% for quiz in quizzes %}
-<div class="row gy-4 filter-active">
-  <div class="col-md-6 col-xl-4 filter-item cat1 cat3 cat5 cat7">
-      <div class="course-box2">
-          <div class="course-img"><img src="https://st2.depositphotos.com/4398873/7554/v/450/depositphotos_75545389-stock-illustration-quiz-multicolor-letters.jpg" alt="course"> <span class="tag">{{ quiz.tier }}</span></div>
-          <div class="course-content">
-              <h3 class="course-title"><a href="{% url 'core:quizes' %}">{{ quiz.name }}</a></h3>
-              <div class="course-author">
-                  <div class="author-info">
-                      <div class="info"><a href="course.html" class="author-name">{{ quiz.subject }}</a> <span class="desig">{{quiz.total_questions_served}} Question</span></div>
-                  </div>
-                  <div class="course-rating">
-                      {{quiz.exam_duration}} Minutes
-                  </div>
-              </div>
-              <div class="course-meta"><span><i class="fal fa-file"></i>{{quiz.points}} Point for each question</span></div>
-          </div>
-      </div>
-  </div>
-</div>
-{% endfor %}
-
-</div>
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Popular Courses</span>
+            <h2 class="sec-title fw-medium">Our Popular Courses</h2>
+        </div>
+        <div class="tab-menu1 filter-menu-active">
+            <button data-filter="*" class="filter-btn active">All Course</button> 
+            {% for course in courses %}
+                <button data-filter=".{{course.name}}" class="filter-btn">{{course.name}}</button> 
+            {% endfor %}
+        </div>
+        <div class="row gy-4 filter-active">
+            {% for quiz in quizzes %}
+            <div class="col-md-6 col-xl-4 filter-item {{quiz.subject.course.name}}">
+                <div class="course-box2">
+                    <div class="course-img"><img src="https://c0.wallpaperflare.com/preview/948/576/922/quiz-exam-icon-button.jpg" alt="course"> 
+                        {% if quiz.tier == "easy" %}
+                            <span class="tag bg-success">{{quiz.tier|title}}</span>
+                        {% elif quiz.tier == "medium" %}
+                            <span class="tag bg-warning">{{quiz.tier|title}}</span>
+                        {% elif quiz.tier == "hard" %}
+                            <span class="tag bg-danger">{{quiz.tier|title}}</span>
+                        {% endif %}
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title"><a href="course-details.html">{{quiz.name}}</a></h3>
+                        <div class="course-author">
+                            <div class="author-info">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3410/3410142.png" alt="author">
+                                <div class="info"><a href="" class="author-name">{{quiz.instructor.first_name}} {{quiz.instructor.last_name}}</a> <span class="desig">Instructor</span></div>
+                            </div>
+                            <!-- <div class="course-rating">
+                                <div class="star-rating" role="img" aria-label="Rated 4.00 out of 5"><span style="width:79%">Rated <strong class="rating">4.00</strong> out of 5</span></div>
+                                (4.00)
+                            </div> -->
+                        </div>
+                        <div class="course-meta">
+                            <span><i class="fal fa-file"></i>Questions: {{quiz.total_questions_served}}</span> 
+                            <span><i class="fal fa-clock"></i>Duration:  {{quiz.exam_duration}} min.</span> 
+                            <span><i class="fal fa-money-bill"></i>Price: {{quiz.price}}$</span></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </section>
 
 <section class="space">

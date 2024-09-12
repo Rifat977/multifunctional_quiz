@@ -21,8 +21,12 @@ from django.core.mail import send_mail
 def index(request):
     
     quizzes = QuestionPattern.objects.all()
+    courses = Course.objects.all()
+
+    print(courses)
     
     return render(request, 'index.html', {
+        'courses' : courses,
         'quizzes': quizzes,
     })
 

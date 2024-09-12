@@ -40,6 +40,7 @@ class QuestionPattern(models.Model):
     ]
     name = models.CharField(max_length=100, unique=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    instructor = models.ForeignKey('account.CustomUser', on_delete=models.CASCADE)
     tier = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES)
     exam_duration = models.IntegerField(default=0)  # Duration in seconds
     is_active = models.BooleanField(default=True)
@@ -47,6 +48,7 @@ class QuestionPattern(models.Model):
     total_questions_served = models.IntegerField(default=0)
     points = models.FloatField(default=1.0, verbose_name="Points for each Question")
     random_serve = models.BooleanField(default=False)
+    price = models.FloatField(default=0)
 
     def __str__(self):
         return self.name
