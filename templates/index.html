@@ -174,12 +174,12 @@
         <div class="tab-menu1 filter-menu-active">
             <button data-filter="*" class="filter-btn active">All Course</button> 
             {% for course in courses %}
-                <button data-filter=".{{course.name}}" class="filter-btn">{{course.name}}</button> 
+                <button data-filter=".{{course.id}}" class="filter-btn">{{course.name}}</button> 
             {% endfor %}
         </div>
         <div class="row gy-4 filter-active">
             {% for quiz in quizzes %}
-            <div class="col-md-6 col-xl-4 filter-item {{quiz.subject.course.name}}">
+            <div class="col-md-6 col-xl-4 filter-item {{quiz.subject.course.id}}">
                 <div class="course-box2">
                     <div class="course-img"><img src="https://c0.wallpaperflare.com/preview/948/576/922/quiz-exam-icon-button.jpg" alt="course"> 
                         {% if quiz.tier == "easy" %}
