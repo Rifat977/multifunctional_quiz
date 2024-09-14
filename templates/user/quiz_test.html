@@ -62,7 +62,7 @@
     }
 
     .full-page {
-        height: 85vh;
+        height: 70vh;
         display: flex;
         flex-direction: column;
     }
@@ -93,12 +93,7 @@
 
 {% block content %}
 
-<div class="text-center">
-    <button id="fullscreenButton" class="btn btn-primary btn-lg">Start Quiz</button>
-</div>
-
-
-<div class="p-3" style="background-color: #0018a9; border-radius: 8px; display: none;" id="quiz_page">
+<div class="p-3" style="background-color: #0018a9; border-radius: 8px;" id="quiz_page">
 
     <div class="mb-2 d-flex">
         <img src="{% static '/logo/londonseru_logo.jpeg' %}" style="height:35px" alt="" srcset="">
@@ -201,22 +196,21 @@
                                                 </div>
                                             {% endfor %}
                                             {% elif question.question_type == 'dropdown' %}
-                                                <p class="mb-2"><strong>{{ question.dropdownquestion.question_text|replace_underscores_with_dropdown:question.dropdownquestion.dropdown_items.all|safe }}</strong></p>
+                                                <div class="row mb-3">
+                                                    <div class="col-10">
+                                                        <p class="mb-2"><strong>{{ question.dropdownquestion.question_text|replace_underscores_with_dropdown:question.dropdownquestion.dropdown_items.all|safe }}</strong></p>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <i class="fe fe-clock fe-16"></i>
+                                                        <span id="timer{{ forloop.counter }}"></span>
+                                                    </div>
+                                                </div>
                                             {% endif %}
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
-                    <!-- <div class="col-12 text-center mt-3">
-                        <div class="card">
-                            <div class="card-body d-flex justify-content-between">
-                                <button type="button" class="btn btn-outline-secondary text-dark" id="previousButton" disabled>Previous</button>
-                                <button type="button" class="btn btn-outline-secondary text-dark" id="nextButton">Next</button>
-                                <button type="submit" class="btn" style="background-color: #0018a9;">Submit Quiz</button>
-                            </div>
-                        </div>
-                    </div>             -->
                 </div>
             </div>
         </div>
@@ -240,16 +234,6 @@
 {% block script %}
 <script>
 
-document.addEventListener('contextmenu', function(event) {
-    event.preventDefault();
-});
-
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I') || event.key === '93' || event.keyCode === 91 || event.keyCode === 92) {
-        event.preventDefault();
-    }
-});
-
 function updateDateTime() {
     const now = new Date();
     const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -266,8 +250,8 @@ setInterval(updateDateTime, 1000);
 
 
 
-// document.body.classList.add('collapsed');
-// document.getElementById('collapseBtn').disabled = true;
+document.body.classList.add('collapsed');
+document.getElementById('collapseBtn').disabled = true;
 
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -277,57 +261,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const fullscreenButton = document.getElementById('fullscreenButton');
     const questionContainer = document.getElementById('quiz_page');
 
-    // Attach the fullscreen request to the Start Quiz button click event
-    fullscreenButton.addEventListener('click', function (event) {
-        // Prevent form submission or default button behavior
-        event.preventDefault();
 
-        // Trigger fullscreen mode for the quiz page
-        if (element.requestFullscreen) {
-            element.requestFullscreen();
-        } else if (element.mozRequestFullScreen) { // For Firefox
-            element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) { // For Chrome, Safari, and Opera
-            element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) { // For IE/Edge
-            element.msRequestFullscreen();
-        }
-
-        // Start the quiz: show the question container and hide the Start Quiz button
-        questionContainer.style.display = "block";
-        fullscreenButton.style.display = "none";
-    });
-
-    // Listen for fullscreen change events (entering or exiting fullscreen)
-    document.addEventListener('fullscreenchange', function () {
-        if (!document.fullscreenElement) {
-            // If the user exits fullscreen, submit the quiz
-            quizForm.submit();
-        }
-    });
-
-    document.addEventListener('webkitfullscreenchange', function () {
-        if (!document.webkitFullscreenElement) {
-            // If the user exits fullscreen (webkit browsers), submit the quiz
-            quizForm.submit();
-        }
-    });
-
-    document.addEventListener('mozfullscreenchange', function () {
-        if (!document.mozFullScreenElement) {
-            // If the user exits fullscreen (Firefox), submit the quiz
-            quizForm.submit();
-        }
-    });
-
-    document.addEventListener('MSFullscreenChange', function () {
-        if (!document.msFullscreenElement) {
-            // If the user exits fullscreen (IE/Edge), submit the quiz
-            quizForm.submit();
-        }
-    });
-
-    
     var nextButton = document.getElementById('nextButton');
     var previousButton = document.getElementById('previousButton');
 
@@ -588,237 +522,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
-{% comment %} 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var nextButton = document.getElementById('nextButton');
-        var previousButton = document.getElementById('previousButton');
-    
-        function updateButtonState() {
-            var activeTab = document.querySelector('#questionTab a.active');
-            var tabs = Array.from(document.querySelectorAll('#questionTab a'));
-            var activeIndex = tabs.indexOf(activeTab);
-    
-            previousButton.disabled = activeIndex === 0;
-            nextButton.disabled = activeIndex === tabs.length - 1;
-        }
-    
-        function navigateTabs(direction) {
-            var activeTab = document.querySelector('#questionTab a.active');
-            var tabs = Array.from(document.querySelectorAll('#questionTab a'));
-            var activeIndex = tabs.indexOf(activeTab);
-            var newIndex = activeIndex + direction;
-    
-            if (newIndex >= 0 && newIndex < tabs.length) {
-                tabs[newIndex].click();
-            }
-        }
-    
-        nextButton.addEventListener('click', function() {
-            navigateTabs(1);
-            updateButtonState();
-        });
-    
-        previousButton.addEventListener('click', function() {
-            navigateTabs(-1);
-            updateButtonState();
-        });
-    
-        // Initialize button state
-        updateButtonState();
-    
-        function startCountdown(duration, display) {
-            var timer = duration * 60, minutes, seconds;
-    
-            var form = document.getElementById('quizForm');
-    
-            var countdownInterval = setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
-    
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-    
-                display.textContent = minutes + ":" + seconds;
-    
-                if (--timer < 0) {
-                    clearInterval(countdownInterval); 
-                    form.submit();
-                }
-            }, 1000);
-        }
-    
-        var durationInMinutes = 5;
-    
-        var display = document.getElementById('timerDemo');
-        startCountdown(durationInMinutes, display);
-        var displayMC = document.getElementById('timerDemoMC');
-        startCountdown(durationInMinutes, displayMC);
-        var displaySC = document.getElementById('timerDemoSC');
-        startCountdown(durationInMinutes, displaySC);
-        var displayDropdown = document.getElementById('timerDropdown');
-        startCountdown(durationInMinutes, displayDropdown);
-    
-        // Drag and drop functionality
-        var dragDropZones = document.querySelectorAll('.drag-drop-zone');
-        var draggableItems = document.querySelectorAll('.option-label');
-        var incorrectBox = document.getElementById('incorrectBox');
-    
-        // Store original positions
-        var originalPositions = {};
-        draggableItems.forEach(function(item) {
-            originalPositions[item.id] = item.parentNode;
-        });
-    
-        draggableItems.forEach(function(item) {
-            item.addEventListener('dragstart', function(event) {
-                event.dataTransfer.setData("text/plain", event.target.id);
-            });
-        });
-    
-        dragDropZones.forEach(function(zone) {
-            zone.addEventListener('dragover', function(event) {
-                event.preventDefault();
-                zone.classList.add('drag-over');
-            });
-    
-            zone.addEventListener('dragleave', function() {
-                zone.classList.remove('drag-over');
-            });
-    
-            zone.addEventListener('drop', function(event) {
-                event.preventDefault();
-                zone.classList.remove('drag-over');
-    
-                if (zone.textContent.trim() === '_____') {
-                    var data = event.dataTransfer.getData("text/plain");
-                    var draggedElement = document.getElementById(data);
-                    zone.textContent = draggedElement.textContent;
-    
-                    // Hide the dragged item
-                    draggedElement.style.display = 'none';
-    
-                    // Handle returning an item to its original position
-                    zone.addEventListener('click', function() {
-                        if (zone.textContent === draggedElement.textContent) {
-                            draggedElement.style.display = 'inline-block';
-                            originalPositions[draggedElement.id].appendChild(draggedElement);
-                            zone.textContent = '_____';
-                        }
-                    });
-                } else {
-                    // If the drop zone is occupied, move the item to the incorrect box
-                    var data = event.dataTransfer.getData("text/plain");
-                    var draggedElement = document.getElementById(data);
-                    incorrectBox.appendChild(draggedElement);
-                }
-            });
-        });
-    
-        // Allow items to be directly moved to the incorrect box from their original position
-        draggableItems.forEach(function(item) {
-            item.addEventListener('dragstart', function(event) {
-                event.dataTransfer.setData("text/plain", event.target.id);
-            });
-
-            incorrectBox.addEventListener('dragover', function(event) {
-                event.preventDefault();
-                incorrectBox.classList.add('drag-over');
-            });
-
-            incorrectBox.addEventListener('dragleave', function() {
-                incorrectBox.classList.remove('drag-over');
-            });
-
-            incorrectBox.addEventListener('drop', function(event) {
-                event.preventDefault();
-                incorrectBox.classList.remove('drag-over');
-
-                var data = event.dataTransfer.getData("text/plain");
-                var draggedElement = document.getElementById(data);
-                incorrectBox.appendChild(draggedElement);
-            });
-            
-            // Allow drag from correct position to incorrect
-            correctBox.addEventListener('dragover', function(event) {
-                event.preventDefault();
-                correctBox.classList.add('drag-over');
-            });
-
-            correctBox.addEventListener('dragleave', function() {
-                correctBox.classList.remove('drag-over');
-            });
-
-            correctBox.addEventListener('drop', function(event) {
-                event.preventDefault();
-                correctBox.classList.remove('drag-over');
-
-                var data = event.dataTransfer.getData("text/plain");
-                var draggedElement = document.getElementById(data);
-                correctBox.appendChild(draggedElement);
-            });
-        });
-
-        // Allow items to be moved back to their original position from the incorrect box
-        incorrectBox.addEventListener('click', function(event) {
-            var target = event.target;
-            if (target.classList.contains('option-label')) {
-                target.style.display = 'inline-block';
-                originalPositions[target.id].appendChild(target);
-            }
-        });
-
-        // Allow items to be directly moved to the incorrect box from their original position
-        draggableItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                if (!item.parentNode.classList.contains('incorrect-box')) {
-                    incorrectBox.appendChild(item);
-                }
-            });
-        });
-
-        // Allow items to be moved to incorrect box from correct position and vice versa
-        draggableItems.forEach(function(item) {
-            item.addEventListener('dragleave', function() {
-                if (item.parentNode.classList.contains('correct-box')) {
-                    incorrectBox.appendChild(item);
-                } else if (item.parentNode.classList.contains('incorrect-box')) {
-                    correctBox.appendChild(item);
-                }
-            });
-        });
-
-    
-        // Tab switching logic
-        var questionTabs = document.querySelectorAll('#questionTab a');
-        var tabContents = document.querySelectorAll('.tab-pane');
-    
-        questionTabs.forEach(function(tab) {
-            tab.addEventListener('click', function(event) {
-                event.preventDefault();
-                var target = document.querySelector(tab.getAttribute('href'));
-    
-                // Remove active class from all tabs and contents
-                questionTabs.forEach(function(tab) {
-                    tab.classList.remove('active');
-                });
-    
-                tabContents.forEach(function(content) {
-                    content.classList.remove('show', 'active');
-                });
-    
-                // Add active class to the clicked tab and corresponding content
-                tab.classList.add('active');
-                target.classList.add('show', 'active');
-    
-                // Update button state
-                updateButtonState();
-            });
-        });
-
-    });
-
-</script>
-
-{% endcomment %}
 {% endblock %}
