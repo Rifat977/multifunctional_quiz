@@ -7,6 +7,8 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.conf import settings
 
+from course.models import QuestionPattern
+
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True)
@@ -36,6 +38,16 @@ class CustomUser(AbstractUser):
         self.password_reset_token = token
         self.save()
         return token
+
+class QuizAccess(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    question_pattern = models.ForeignKey(QuestionPattern, on_delete=models.CASCADE)
+    access_granted_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.question_pattern.name}"
+
 
 @receiver(models.signals.pre_save, sender=CustomUser)
 def notify_user_on_approval(sender, instance, **kwargs):

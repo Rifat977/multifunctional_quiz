@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from .models import CustomUser
+from account.models import QuizAccess
 
 admin.site.unregister(Group)
 
@@ -11,3 +12,11 @@ class CustomUserDisplay(admin.ModelAdmin):
 
 
 admin.site.register(CustomUser, CustomUserDisplay)
+
+
+class QuizAccessAdmin(admin.ModelAdmin):
+    list_display = ('user', 'question_pattern', 'access_granted_at', 'is_active')
+    list_filter = ('question_pattern', 'is_active')
+    search_fields = ('user__username', 'question_pattern__name')
+
+admin.site.register(QuizAccess, QuizAccessAdmin)

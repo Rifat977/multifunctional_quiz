@@ -48,7 +48,7 @@ def json_script(value):
 def replace_underscores_with_dropdown(question_text, dropdown_items):
     for item in dropdown_items:
         select_html = f'<select name="dropdown_{item.id}" class="form-control" style="width: auto; display: inline-block;">'
-        select_html += f'<option value="">Select Answer for {item.id}</option>'
+        select_html += f'<option value=""></option>'
         for option in item.options.all():
             select_html += f'<option value="{option.option_text}">{option.option_text}</option>'
         select_html += '</select>'

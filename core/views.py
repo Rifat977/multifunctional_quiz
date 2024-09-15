@@ -16,6 +16,10 @@ from decimal import Decimal
 
 from django.core.mail import send_mail
 
+from account.models import QuizAccess
+from django.http import HttpResponseForbidden
+
+
 
 # Create your views here.
 def index(request):
@@ -53,17 +57,18 @@ def contact(request):
         return redirect('core:contact')
     return render(request, 'contact.html')
 
+
 @login_required
 def home(request):
     user = request.user
     user_course = request.user.course
 
-    f_quizzes = QuestionPattern.objects.all()
+    accessible_quizzes = QuizAccess.objects.filter(user=user, is_active=True).values_list('question_pattern', flat=True)
+    f_quizzes = QuestionPattern.objects.filter(id__in=accessible_quizzes)
 
     f_quizzes_grouped_by_subject = {}
     for subject, quizzes_in_subject in groupby(f_quizzes, lambda quiz: quiz.subject):
         f_quizzes_grouped_by_subject[subject] = list(quizzes_in_subject)
-
 
     notification = Notification.objects.filter(is_active=True).first()
 
@@ -86,15 +91,17 @@ def home(request):
         'f_participation_status': f_participation_status,
         'notification': notification,
         'attempt_ids': attempt_ids,
-        'is_all_correct' : is_all_correct
+        'is_all_correct': is_all_correct
     })
+
 
 @login_required
 def quizes(request):
     user = request.user
-    user_course = request.user.course
-    quizzes = QuestionPattern.objects.all()
-    
+
+    accessible_quizzes = QuizAccess.objects.filter(user=user, is_active=True).values_list('question_pattern', flat=True)
+    quizzes = QuestionPattern.objects.filter(id__in=accessible_quizzes)
+
     participation_status = {}
     attempt_ids = {}
     is_all_correct = {}
@@ -108,39 +115,30 @@ def quizes(request):
         else:
             participation_status[quiz.id] = False
 
-
     return render(request, 'user/quizes.html', {
-        'quizzes': quizzes, 'participation_status': participation_status,
+        'quizzes': quizzes,
+        'participation_status': participation_status,
         'attempt_ids': attempt_ids,
         'is_all_correct': is_all_correct
-        }
-    )
+    })
 
-# @login_required
-# def quiz(request):
-#     if request.method == 'POST':
-#         user = request.user
-#         q_pattern_id = request.POST.get('quiz')
-#         q_pattern = QuestionPattern.objects.get(pk=q_pattern_id)
-
-#         user_attempt = UserAttempt.objects.get_or_create(user=user, question_pattern=q_pattern)
-#         atm = UserAttempt.objects.get(user=user, question_pattern=q_pattern)
-#         if q_pattern.random_serve:
-#             questions = Question.objects.filter(question_pattern=q_pattern)
-#             total_questions_served = min(q_pattern.total_questions_served, questions.count())
-#             questions = random.sample(list(questions), total_questions_served)
-#         else:
-#             questions = Question.objects.filter(question_pattern=q_pattern).order_by('id')[:q_pattern.total_questions_served]
-
-#         return render(request, 'user/quiz_test.html', {'q_pattern': q_pattern, 'questions': questions, 'user_attempt':atm})
-#     return redirect("core:home")
 
 @login_required
 def quiz(request):
     if request.method == 'POST':
         user = request.user
         q_pattern_id = request.POST.get('quiz')
-        q_pattern = QuestionPattern.objects.get(pk=q_pattern_id)
+        # q_pattern = QuestionPattern.objects.get(pk=q_pattern_id)
+
+        try:
+            q_pattern = QuestionPattern.objects.get(id=q_pattern_id)
+        except QuestionPattern.DoesNotExist:
+            return HttpResponseForbidden("Quiz pattern does not exist.")
+
+        if not QuizAccess.objects.filter(user=user, question_pattern=q_pattern, is_active=True).exists():
+            return HttpResponseForbidden("You do not have access to this quiz pattern.")
+
+
 
         user_attempt, created = UserAttempt.objects.get_or_create(user=user, question_pattern=q_pattern)
 

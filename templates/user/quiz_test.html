@@ -393,7 +393,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     draggedElement.style.display = 'none';
 
                     // Allow item to be returned to original position on click
-                    zone.addEventListener('dragleave', function() {
+                    zone.addEventListener('dragend', function() {
                         if (zone.dataset.itemId) {
                             var item = document.getElementById(zone.dataset.itemId);
                             item.style.display = 'inline-block';
