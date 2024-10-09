@@ -10,21 +10,9 @@ SECRET_KEY = 'django-insecure-&=ok5auj%o&+@*i43$9mr4m52i%4oocz(00w_%t_=dvuhb$#9)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['londonseru.com', '127.0.0.1', 'localhost']
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://londonseru.com',
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
-    'http://127.0.0.1',
-    'http://localhost'
-]
-
-CSRF_COOKIE_SECURE = True  # Set this to True in production if using HTTPS
-SESSION_COOKIE_SECURE = True
-
-
-SESSION_COOKIE_AGE = 1209600  # 2 weeks
+CSRF_TRUSTED_ORIGINS = ['https://londonseru.com', 'http://127.0.0.1:8000']
 
 
 AUTH_USER_MODEL = 'account.CustomUser'
@@ -50,7 +38,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
