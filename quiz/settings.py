@@ -12,10 +12,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['londonseru.com', '127.0.0.1', 'localhost']
 
-CSRF_TRUSTED_ORIGINS = ['https://londonseru.com', 'http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = [
+    'https://londonseru.com',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://127.0.0.1',
+    'http://localhost'
+]
 
 CSRF_COOKIE_SAMESITE = None
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
 
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 
