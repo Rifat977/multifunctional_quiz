@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ['londonseru.com', '127.0.0.1', 'localhost']
 CSRF_TRUSTED_ORIGINS = ['https://londonseru.com', 'http://127.0.0.1:8000']
 
 CSRF_COOKIE_SAMESITE = None
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 
