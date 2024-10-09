@@ -115,12 +115,12 @@ USE_I18N = True
 USE_TZ = True
 
 JAZZMIN_SETTINGS = {
-    "site_title": "Entrance Quiz",
-    "site_header": "Entrance Quiz",
-    "site_brand": "EntranceQuiz",
+    "site_title": "London Seru",
+    "site_header": "London Seru",
+    "site_brand": "LondonSeru",
     "welcome_sign": "Sign In",
-    "copyright": "Entrance Quiz",
-    "site_logo": "/logo/logo.svg",
+    "copyright": "London Seru",
+    "site_logo": "/logo/logo.png",
 }
 
 
