@@ -20,8 +20,9 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost'
 ]
 
-CSRF_COOKIE_SAMESITE = None
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_SECURE = True  # Set this to True in production if using HTTPS
+SESSION_COOKIE_SECURE = True
+
 
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 
