@@ -57,11 +57,11 @@ def notify_user_on_approval(sender, instance, **kwargs):
         except CustomUser.DoesNotExist:
             return
 
-        if instance.is_approved and not old_instance.is_approved and instance.is_verified:
-            send_mail(
-                'Your profile has been approved',
-                'Your profile has been approved. You can now access the site.',
-                'Entrance Quiz <support@entrancequiz.com>',
-                [instance.email],
-                fail_silently=False,
-            )
+        # if instance.is_approved and not old_instance.is_approved and instance.is_verified:
+        #     send_mail(
+        #         'Your profile has been approved',
+        #         'Your profile has been approved. You can now access the site.',
+        #         'Entrance Quiz <support@entrancequiz.com>',
+        #         [instance.email],
+        #         fail_silently=False,
+        #     )
