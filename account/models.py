@@ -12,8 +12,7 @@ from course.models import QuestionPattern
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
-    message = models.TextField(blank=True)
+    address = models.TextField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to='avatars/', blank=True)

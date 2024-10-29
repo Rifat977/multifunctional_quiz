@@ -1,0 +1,182 @@
+{% extends 'partials/base.html' %}
+
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="breadcumb-wrapper" data-bg-src="assets/img/bg/breadcumb-bg.jpg" data-overlay="title" data-opacity="8">
+    <div class="breadcumb-shape" data-bg-src="assets/img/bg/breadcumb_shape_1_1.png"></div>
+    <div class="shape-mockup breadcumb-shape2 jump d-lg-block d-none" data-right="30px" data-bottom="30px"><img
+            src="{% static 'assets/img/bg/breadcumb_shape_1_2.png' %}" alt="shape"></div>
+    <div class="shape-mockup breadcumb-shape3 jump-reverse d-lg-block d-none" data-left="50px" data-bottom="80px">
+        <img src="{% static 'assets/img/bg/breadcumb_shape_1_3.png' %}" alt="shape"></div>
+    <div class="container">
+        <div class="breadcumb-content text-center">
+            <h1 class="breadcumb-title">Courses Page</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="index.html">Home</a></li>
+                <li>Courses</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<section class="space-top space-extra2-bottom">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-8 order-lg-2">
+                <div class="th-sort-bar course-sort-bar">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-md">
+                            <p class="woocommerce-result-count">Showing <span class="text-theme">12 courses</span>
+                                Of 16 Result</p>
+                        </div>
+                        <div class="col-md-auto">
+                            <div class="nav" role="tablist"><a class="active" href="#" id="tab-shop-list"
+                                    data-bs-toggle="tab" data-bs-target="#tab-list" role="tab"
+                                    aria-controls="tab-grid" aria-selected="false"><i
+                                        class="fa-solid fa-grid-2 me-2"></i>Grid</a> <a href="#" id="tab-shop-grid"
+                                    data-bs-toggle="tab" data-bs-target="#tab-grid" role="tab"
+                                    aria-controls="tab-grid" aria-selected="true"><i
+                                        class="fa-solid fa-list me-2"></i>List</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade" id="tab-grid" role="tabpanel" aria-labelledby="tab-shop-grid">
+                        <div class="row gy-30">
+                            <div class="col-12">
+                                <div class="course-grid">
+                                    <div class="course-img"><img src="{% static 'assets/img/course/course_2_1.png' %}" alt="img">
+                                        <span class="tag"><i class="fas fa-clock"></i> 03 WEEKS</span></div>
+                                    <div class="course-content">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="course-rating">
+                                                <div class="star-rating" role="img"
+                                                    aria-label="Rated 4.00 out of 5"><span style="width:79%">Rated
+                                                        <strong class="rating">4.00</strong> out of 5</span></div>
+                                                (4.7)
+                                            </div>
+                                            <div class="offer-tag">Free</div>
+                                        </div>
+                                        <h3 class="course-title"><a href="course-details.html">Education Software
+                                                and PHP and JS System Script</a></h3>
+                                        <p class="course-text">We are committed to making a positive impact on
+                                            education globally. Through our initiatives, we aim to bridge
+                                            educational gaps, improve learning outcomes.</p>
+                                        <div class="course-meta style2"><span><i class="fal fa-file"></i>Lesson
+                                                8</span> <span><i class="fal fa-user"></i>Students 60+</span>
+                                            <span><i class="fal fa-chart-simple"></i>Beginner</span></div>
+                                        <div class="course-author">
+                                            <div class="author-info"><img src="{% static 'assets/img/course/author.png' %}"
+                                                    alt="author"> <a href="course.html" class="author-name">Max
+                                                    Alexix</a></div><a href="course-details.html"
+                                                class="link-btn">View Details<i
+                                                    class="fas fa-arrow-right ms-2"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade active show" id="tab-list" role="tabpanel"
+                        aria-labelledby="tab-shop-list">
+                        <div class="row gy-30">
+                            {% for quiz in quizzes %}
+                            <div class="col-md-6 col-xl-4">
+                                <div class="course-box style2">
+                                    <div class="course-img"><img src="https://c0.wallpaperflare.com/preview/948/576/922/quiz-exam-icon-button.jpg" alt="course"> 
+                                        {% if quiz.tier == "easy" %}
+                                            <span class="tag bg-success">{{quiz.tier|title}}</span>
+                                        {% elif quiz.tier == "medium" %}
+                                            <span class="tag bg-warning">{{quiz.tier|title}}</span>
+                                        {% elif quiz.tier == "hard" %}
+                                            <span class="tag bg-danger">{{quiz.tier|title}}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="course-content">
+                                        <div class="course-rating">
+                                            <div class="star-rating" role="img" aria-label="Rated 4.00 out of 5">
+                                                <span style="width:79%">Rated <strong class="rating">4.00</strong>
+                                                    out of 5</span></div>(4.7)
+                                        </div>
+                                        <h3 class="course-title"><a href="course-details.html">{{quiz.name}}</a></h3>
+                                        <div class="course-meta">
+                                            <span><i class="fal fa-file"></i>Questions: {{quiz.total_questions_served}}</span>
+                                            <span><i class="fal fa-clock"></i>Duration:  {{quiz.exam_duration}} min.</span>
+                                        </div>
+                                        <div class="course-author">
+                                            <div class="author-info"><img src="https://cdn-icons-png.flaticon.com/512/3410/3410142.png"
+                                                    alt="author"> <a href="course.html" class="author-name">{{quiz.instructor.first_name}} {{quiz.instructor.last_name}}</a></div>
+                                            <div class="offer-tag">
+                                                {% if quiz.price == 0.0 %}
+                                                    Free
+                                                {% else %}
+                                                    {{ quiz.price }}
+                                                {% endif %}
+                                            </div>                                                    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="th-pagination text-center pt-50">
+                    <ul>
+                        <li><a href="blog.html">01</a></li>
+                        <li><a href="blog.html"><i class="far fa-arrow-right"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 order-lg-1">
+                <aside class="sidebar-area sidebar-shop">
+                    <div class="widget widget_search">
+                        <form class="search-form"><input type="text" placeholder="Search Product..."> <button
+                                type="submit"><i class="far fa-search"></i></button></form>
+                    </div>
+                    <div class="widget widget_categories style2">
+                        <h3 class="widget_title">Categories</h3>
+                        <ul>
+                            <li><input id="beginnercheck" name="beginnercheck" type="checkbox" checked="checked">
+                                <label for="beginnercheck">Beginner<span class="checkmark"></span></label>
+                                <ul class="sub-cat">
+                                    <li><input id="designcheck" name="designcheck" type="checkbox"
+                                            checked="checked"> <label for="designcheck">Design<span
+                                                class="checkmark"></span></label></li>
+                                </ul>
+                            </li>
+                            <li><input id="reviewcheck" name="reviewcheck" type="checkbox"> <label
+                                    for="reviewcheck">Intermediate<span class="checkmark"></span></label></li>
+                            <li><input id="reviewcheck" name="reviewcheck" type="checkbox"> <label
+                                    for="reviewcheck">Experts<span class="checkmark"></span></label></li>
+                        </ul>
+                    </div>
+                    <div class="widget widget_price_filter style2">
+                        <h4 class="widget_title">Price Level</h4>
+                        <ul>
+                            <li><input id="freecheck" name="freecheck" type="checkbox" checked="checked"> <label
+                                    for="freecheck">Free<span class="checkmark"></span></label></li>
+                        </ul>
+                    </div>
+                    <div class="widget widget_time_duration style2">
+                        <h4 class="widget_title">Time Duration</h4>
+                        <ul>
+                            <li><input id="timecheck1" name="timecheck1" type="checkbox"> <label
+                                    for="timecheck1">6+hours (15)<span class="checkmark"></span></label></li>
+                        </ul>
+                    </div>
+                    <div class="widget widget_instructor style2">
+                        <h4 class="widget_title">Our Instructor</h4>
+                        <ul>
+                            <li><input id="instructor1" name="instructor1" type="checkbox"> <label
+                                    for="instructor1">David Smith<span class="checkmark"></span></label></li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

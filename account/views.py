@@ -67,11 +67,6 @@ def register(request):
 
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
-        course_id = request.POST.get('course')
-        try:
-            course = Course.objects.get(pk=course_id)
-        except Course.DoesNotExist:
-            pass
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
@@ -80,7 +75,6 @@ def register(request):
             token = default_token_generator.make_token(user)
             user.email_verification_token = token
             user.email_verification_sent_at = timezone.now()
-            user.course = course
             user.save()
 
             send_verification_email(user)

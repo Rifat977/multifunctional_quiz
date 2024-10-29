@@ -34,6 +34,17 @@ def index(request):
         'quizzes': quizzes,
     })
 
+def all_quiz(request):
+    quizzes = QuestionPattern.objects.all()
+    courses = Course.objects.all()
+
+    print(courses)
+    
+    return render(request, 'all-quiz.html', {
+        'courses' : courses,
+        'quizzes': quizzes,
+    })
+
 def policy(request):
     return render(request, 'policy.html')
 

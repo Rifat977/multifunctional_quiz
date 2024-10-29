@@ -21,7 +21,7 @@
                           <li>Great Life</li>
                       </ul>
                   </div>
-                  <div class="btn-group"><a href="course.html" class="th-btn">Get Started<i class="fas fa-long-arrow-right ms-2"></i></a> <a href="course.html" class="th-btn style5">Our Courses<i class="fas fa-long-arrow-right ms-2"></i></a></div>
+                  <div class="btn-group"><a href="https://wa.me/+447495401137" class="th-btn">Get Started<i class="fas fa-long-arrow-right ms-2"></i></a> <a href="{% url 'core:all_quiz' %}" class="th-btn style5">Our Courses<i class="fas fa-long-arrow-right ms-2"></i></a></div>
               </div>
           </div>
           <div class="col-xl-6">
@@ -205,7 +205,8 @@
                         <div class="course-meta">
                             <span><i class="fal fa-file"></i>Questions: {{quiz.total_questions_served}}</span> 
                             <span><i class="fal fa-clock"></i>Duration:  {{quiz.exam_duration}} min.</span> 
-                            <span><i class="fal fa-money-bill"></i>Price: {{quiz.price}}$</span></div>
+                            <span><i class="fal fa-money-bill"></i>Price: {{quiz.price}}$</span>
+                        </div>
                     </div>
                 </div>
             </div>
