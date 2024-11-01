@@ -49,6 +49,8 @@ class QuestionPattern(models.Model):
     points = models.FloatField(default=1.0, verbose_name="Points for each Question")
     random_serve = models.BooleanField(default=False)
     price = models.FloatField(default=0)
+    image = models.ImageField(upload_to='quiz_images/', blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name

@@ -45,6 +45,13 @@ def all_quiz(request):
         'quizzes': quizzes,
     })
 
+def quiz_details(request, id):
+    quiz = QuestionPattern.objects.get(id=id)
+    context = {
+        'quiz' : quiz
+    }
+    return render(request, 'quiz-details.html', context)
+
 def policy(request):
     return render(request, 'policy.html')
 

@@ -181,7 +181,7 @@
             {% for quiz in quizzes %}
             <div class="col-md-6 col-xl-4 filter-item {{quiz.subject.course.id}}">
                 <div class="course-box2">
-                    <div class="course-img"><img src="https://c0.wallpaperflare.com/preview/948/576/922/quiz-exam-icon-button.jpg" alt="course"> 
+                    <div class="course-img"><img src="{{quiz.image.url}}" alt="course"> 
                         {% if quiz.tier == "easy" %}
                             <span class="tag bg-success">{{quiz.tier|title}}</span>
                         {% elif quiz.tier == "medium" %}
@@ -191,11 +191,11 @@
                         {% endif %}
                     </div>
                     <div class="course-content">
-                        <h3 class="course-title"><a href="">{{quiz.name}}</a></h3>
+                        <h3 class="course-title"><a href="{% url 'core:quiz_details' quiz.id %}">{{quiz.name}}</a></h3>
                         <div class="course-author">
                             <div class="author-info">
                                 <img src="https://cdn-icons-png.flaticon.com/512/3410/3410142.png" alt="author">
-                                <div class="info"><a href="" class="author-name">{{quiz.instructor.first_name}} {{quiz.instructor.last_name}}</a> <span class="desig">Instructor</span></div>
+                                <div class="info"><span class="author-name">{{quiz.instructor.first_name}} {{quiz.instructor.last_name}}</span> <span class="desig">Instructor</span></div>
                             </div>
                             <!-- <div class="course-rating">
                                 <div class="star-rating" role="img" aria-label="Rated 4.00 out of 5"><span style="width:79%">Rated <strong class="rating">4.00</strong> out of 5</span></div>

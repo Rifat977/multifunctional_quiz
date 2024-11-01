@@ -1,0 +1,98 @@
+{% extends 'partials/base.html' %}
+
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="breadcumb-wrapper" data-bg-src="assets/img/bg/breadcumb-bg.jpg" data-overlay="title" data-opacity="8">
+    <div class="breadcumb-shape" data-bg-src="assets/img/bg/breadcumb_shape_1_1.png"></div>
+    <div class="shape-mockup breadcumb-shape2 jump d-lg-block d-none" data-right="30px" data-bottom="30px"><img
+            src="{% static 'assets/img/bg/breadcumb_shape_1_2.png' %}" alt="shape"></div>
+    <div class="shape-mockup breadcumb-shape3 jump-reverse d-lg-block d-none" data-left="50px" data-bottom="80px">
+        <img src="{% static 'assets/img/bg/breadcumb_shape_1_3.png' %}" alt="shape"></div>
+    <div class="container">
+        <div class="breadcumb-content text-center">
+            <h1 class="breadcumb-title">Courses Details</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{% url 'core:index' %}">Home</a></li>
+                <li>Courses</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<section class="space-top space-extra2-bottom">
+    <div class="container">
+        <div class="row">
+            <div class="col-xxl-9 col-lg-8">
+                <div class="course-single">
+                    <div class="course-single-top">
+                        <div class="course-img"><img src="{{quiz.image.url}}" alt="Course Image">
+                            <span class="tag"><i class="fas fa-clock"></i> {{quiz.exam_duration}} Minute</span> 
+                        </div>
+                        <div class="course-meta style2"><span><i class="fal fa-file"></i>Questions {{quiz.total_questions_served}}</span> 
+                            <span><i class="fal fa-chart-simple"></i>{{quiz.tier.title}}</span></div>
+                        <h2 class="course-title">{{quiz.name}}</h2>
+                        <ul class="course-single-meta">
+                            <li class="course-single-meta-author"><img src="https://cdn-icons-png.flaticon.com/512/3410/3410142.png"
+                                    alt="author"> <span><span class="meta-title">Instructor: </span><a
+                                        href="course.html">{{quiz.instructor.first_name}} {{quiz.instructor.last_name}}</a></span></li>
+                            <li><span class="meta-title">Subject: </span><a href="course.html">{{quiz.subject}}</a>
+                            </li>
+                            </li>
+                            <li><span class="meta-title">Review:</span>
+                                <div class="course-rating">
+                                    <div class="star-rating" role="img" aria-label="Rated 4.00 out of 5"><span
+                                            style="width:80%">Rated <strong class="rating">4.00</strong> out of
+                                            5</span></div>(4.00)
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="course-single-bottom">
+                        <ul class="nav course-tab" id="courseTab" role="tablist">
+                            <li class="nav-item" role="presentation"><a class="nav-link active" id="description-tab"
+                                    data-bs-toggle="tab" href="#Coursedescription" role="tab"
+                                    aria-controls="Coursedescription" aria-selected="true"><i
+                                        class="fa-regular fa-bookmark"></i>Overview</a></li>
+                        </ul>
+                        <div class="tab-content" id="productTabContent">
+                            <div class="tab-pane fade show active" id="Coursedescription" role="tabpanel"
+                                aria-labelledby="description-tab">
+                                <div class="course-description">
+                                    <h5 class="h5">Description</h5>
+                                    <p>{{quiz.description}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-lg-4">
+                <aside class="sidebar-area">
+                    <div class="widget widget_info">
+                        <span class="h4 course-price">
+                            ${{quiz.price}} 
+                        </span>
+                        <a href="" class="th-btn style4">Buy Now</a>
+                        <h3 class="widget_title">Course Information</h3>
+                        <div class="info-list">
+                            <ul>
+                                <li><i class="fa-light fa-user"></i> <strong>Instructor: </strong><span>{{quiz.instructor.first_name}} {{quiz.instructor.last_name}}</span></li>
+                                <li><i class="fa-light fa-file"></i> <strong>Questions: </strong><span>{{quiz.total_questions_served}}</span></li>
+                                <li><i class="fa-light fa-clock"></i> <strong>Duration: </strong><span>{{quiz.exam_duration}} minute
+                                        </span></li>
+                                <li><i class="fa-light fa-tag"></i> <strong>Course level:
+                                    </strong><span>{{quiz.tier.title}}</span></li>
+                                <li><i class="fa-light fa-globe"></i> <strong>Language:
+                                    </strong><span>English</span></li>
+                            </ul>
+                        </div><a href="https://www.linkedin.com/" class="th-btn style6 mt-35 mb-0"><i
+                                class="far fa-share-nodes me-2"></i>Share This Course</a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
