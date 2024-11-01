@@ -229,7 +229,7 @@
           <div class="th-box_content">
               <h3 class="h4 th-box_title">Do You Want Physical Class?</h3>
               <p class="th-box_text">Explore all of our courses and pick your suitable ones to enroll and start learning with us!</p>
-              <a href="contact.html" class="th-btn">Register Now<i class="fas fa-arrow-right ms-2"></i></a>
+              <a href="{% url 'account:register' %}" class="th-btn">Register Now<i class="fas fa-arrow-right ms-2"></i></a>
           </div>
       </div>
   </div>
@@ -239,7 +239,7 @@
           <div class="th-box_content">
               <h3 class="h4 th-box_title">Want To Learn Online Class?</h3>
               <p class="th-box_text">Explore all of our courses and pick your suitable ones to enroll and start learning with us!</p>
-              <a href="contact.html" class="th-btn">Register Now<i class="fas fa-arrow-right ms-2"></i></a>
+              <a href="{% url 'account:register' %}" class="th-btn">Register Now<i class="fas fa-arrow-right ms-2"></i></a>
           </div>
       </div>
   </div>
@@ -257,12 +257,12 @@
               <h4 class="cta-title sec-title">Get Your private hire driver licence</h4>
               <p class="cta-text">Met consectetur adipiscing sed eiustempore dolore</p>
           </div>
-          <a href="about.html" class="th-btn style8">Join With Us<i class="fas fa-arrow-right ms-1"></i></a>
+          <a href="https://wa.me/+447495401137" class="th-btn style8">Join With Us<i class="fas fa-arrow-right ms-1"></i></a>
       </div>
   </div>
 </div>
 </div>
-<div class="cta-img-1" data-overlay="title" data-opacity="8"><img src="{% static 'assets/img/normal/cta_1_1.png' %}" alt="Image"> <a href="https://www.youtube.com/watch?v=_sI_Ps7JSEk" class="play-btn style2 popup-video"><i class="fa-sharp fa-solid fa-play"></i></a></div>
+<div class="cta-img-1" data-overlay="title" data-opacity="8"><img src="{% static 'assets/img/normal/cta_1_1.png' %}" alt="Image"> <a href="https://youtu.be/6oGTnsoi76k?si=AV1cYzFQAThI5f6a" class="play-btn style2 popup-video"><i class="fa-sharp fa-solid fa-play"></i></a></div>
 </div>
 
 
@@ -433,7 +433,7 @@
                           <li>Friendly Enviroments & Teachers</li>
                       </ul>
                   </div>
-                  <div class="btn-group"><a class="th-btn" href="course.html">Explore Our Courses <i class="fa fa-arrow-right me"></i></a></div>
+                  <div class="btn-group"><a class="th-btn" href="{% url 'core:all_quiz' %}">Explore Our Courses <i class="fa fa-arrow-right me"></i></a></div>
               </div>
               <div class="student-count style2">
                   <h5 class="title"><span class="text-theme"><span class="counter-number">56</span>k+</span> Enrolled Students</h5>
@@ -545,7 +545,7 @@
       <div class="bg-shape gr-bg1"></div>
       <div class="container">
           <div class="course-grid2">
-              <div class="course-img"><img src="{% static 'assets/img/update1/course/course_5_1.jpg' %}" alt="course"> <a href="https://www.youtube.com/watch?v=_sI_Ps7JSEk" class="play-btn popup-video"><i class="fas fa-play"></i></a></div>
+              <div class="course-img"><img src="{% static 'assets/img/update1/course/course_5_1.jpg' %}" alt="course"> <a href="https://www.youtube.com/embed/-uh4gW3Fed0" class="play-btn popup-video"><i class="fas fa-play"></i></a></div>
               <div class="course-content">
                   <h3 class="course-title"><a href="course-details.html">How To Make Something Very Easier</a></h3>
                   <a href="course.html" class="course-author">by David Anfle Smith</a>
@@ -566,7 +566,7 @@
               </div>
           </div>
           <div class="course-grid2">
-              <div class="course-img"><img src="{% static 'assets/img/update1/course/course_5_2.jpg' %}" alt="course"> <a href="https://www.youtube.com/watch?v=_sI_Ps7JSEk" class="play-btn popup-video"><i class="fas fa-play"></i></a></div>
+              <div class="course-img"><img src="{% static 'assets/img/update1/course/course_5_2.jpg' %}" alt="course"> <a href="https://www.youtube.com/embed/-uh4gW3Fed0" class="play-btn popup-video"><i class="fas fa-play"></i></a></div>
               <div class="course-content">
                   <h3 class="course-title"><a href="course-details.html">Try To Make Something Very Easily</a></h3>
                   <a href="course.html" class="course-author">by David Anfle Smith</a>
@@ -603,13 +603,13 @@
                   <h2 class="sec-title fw-medium text-white">Get Solutions With Our Instructors</h2>
               </div>
               <p class="mb-30 text-light">Quality technologies via fully tested methods of empowerment. Proactively disseminate web enabled best practices after cross functional expertise.</p>
-              <form class="course-form mb-2" action="#">
+              <form class="course-form mb-2" action="{% url 'core:appointment_form' %}" method="POST">
                   <div class="row">
                       <div class="col-md-6">
-                          <div class="form-group"><input type="text" placeholder="Name*"></div>
+                          <div class="form-group"><input type="text" placeholder="Name*" name="name"></div>
                       </div>
                       <div class="col-md-6">
-                          <div class="form-group"><input type="text" placeholder="Email Address*"></div>
+                          <div class="form-group"><input type="text" placeholder="Email Address*" name="email"></div>
                       </div>
                       <div class="col-lg-6">
                           <div class="form-group"><input type="date" name="number" id="number" placeholder="Inspection Date*"></div>
@@ -618,8 +618,8 @@
                           <div class="form-group"><input type="text" name="subject" id="subject" placeholder="Subject*"></div>
                       </div>
                   </div>
+                  <button type="submit" class="th-btn style3">Make an Appointment<i class="fas fa-arrow-right ms-2"></i></button>
               </form>
-              <a href="course.html" class="th-btn style3">Make an Appointment<i class="fas fa-arrow-right ms-2"></i></a>
           </div>
       </div>
   </div>

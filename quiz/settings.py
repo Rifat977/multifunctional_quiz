@@ -62,6 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.question_patterns',
             ],
             'libraries': {
                 'custom_filters': 'core.custom_filters',
@@ -152,9 +153,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_USE_SSL = True
 
 
-EMAIL_HOST = 'mail.entrancequiz.com'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'support@entrancequiz.com'
-EMAIL_HOST_PASSWORD = '@o17Xzq.80UlYS'
-DEFAULT_FROM_EMAIL = 'support@entrancequiz.com'
-EMAIL_USE_SSL=True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587  # Use 587 with TLS
+EMAIL_USE_TLS = True  # Enable TLS (STARTTLS)
+EMAIL_USE_SSL = False  # Disable SSL, as TLS is sufficient on port 587
+EMAIL_HOST_USER = 'itscrifat5147@gmail.com'
+EMAIL_HOST_PASSWORD = ''  # Make sure this is an app-specific password if 2FA is enabled
+DEFAULT_FROM_EMAIL = 'itscrifat5147@gmail.com'

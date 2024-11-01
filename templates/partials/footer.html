@@ -48,7 +48,7 @@
               <div class="col-md-6 col-xxl-3 col-xl-4">
                   <div class="widget footer-widget">
                       <div class="th-widget-about">
-                          <div class="about-logo"><a href="index.html"><img src="{% static 'assets/img/logo-white.svg' %}" alt="Edura"></a></div>
+                          <div class="about-logo"><a href="index.html"><img src="{% static 'logo/logo.png' %}" alt="London Seru"></a></div>
                           <p class="about-text">Continually optimize backward manufactured products whereas communities negotiate life compelling alignments</p>
                           <div class="th-social">
                               <h6 class="title text-white">FOLLOW US ON:</h6>
@@ -59,42 +59,12 @@
               </div>
               <div class="col-md-6 col-xl-auto">
                   <div class="widget widget_nav_menu footer-widget style2">
-                      <h3 class="widget_title">Company</h3>
-                      <div class="menu-all-pages-container">
-                          <ul class="menu">
-                              <li><a href="about.html">About Us</a></li>
-                              <li><a href="course.html">Resource Center</a></li>
-                              <li><a href="course.html">Careers</a></li>
-                              <li><a href="team.html">Instructor</a></li>
-                              <li><a href="contact.html">Become A Teacher</a></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-              <div class="col-md-6 col-xl-auto">
-                  <div class="widget widget_nav_menu footer-widget style2">
                       <h3 class="widget_title">Courses</h3>
                       <div class="menu-all-pages-container">
                           <ul class="menu">
-                              <li><a href="course.html">Health Course</a></li>
-                              <li><a href="course.html">Development</a></li>
-                              <li><a href="course.html">Web Design</a></li>
-                              <li><a href="course.html">SEO Optimize</a></li>
-                              <li><a href="course.html">Marketing</a></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-              <div class="col-md-6 col-xl-auto">
-                  <div class="widget widget_nav_menu footer-widget style2">
-                      <h3 class="widget_title">Resourses</h3>
-                      <div class="menu-all-pages-container">
-                          <ul class="menu">
-                              <li><a href="about.html">Community</a></li>
-                              <li><a href="contact.html">Support</a></li>
-                              <li><a href="course.html">Video Guides</a></li>
-                              <li><a href="course.html">Documentation</a></li>
-                              <li><a href="contact.html">Security</a></li>
+                            {% for pattern in footer_question_patterns %}
+                              <li><a href="{% url 'core:quiz_details' pattern.id %}">{{pattern.name}}</a></li>
+                            {% endfor %}
                           </ul>
                       </div>
                   </div>

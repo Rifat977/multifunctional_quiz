@@ -107,8 +107,9 @@
                                         </div>
                                         <div class="course-author">
                                             <div class="author-info"><img src="https://cdn-icons-png.flaticon.com/512/3410/3410142.png"
-                                                    alt="author"> <a href="{% url 'core:quiz_details' %}" class="author-name">{{quiz.instructor.first_name}} {{quiz.instructor.last_name}}</a></div>
+                                                    alt="author"> <a href="{% url 'core:quiz_details' quiz.id %}" class="author-name">{{quiz.instructor.first_name}} {{quiz.instructor.last_name}}</a></div>
                                             <div class="offer-tag">
+                                                $
                                                 {% if quiz.price == 0.0 %}
                                                     Free
                                                 {% else %}

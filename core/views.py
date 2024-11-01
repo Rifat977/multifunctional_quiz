@@ -4,21 +4,19 @@ from django.contrib.auth.decorators import login_required
 from course.models import *
 from .models import *
 from django.contrib import messages
-
 import json, random, ast
 from collections import Counter
-
 from itertools import groupby
 from django.db.models import F, Count, Q
-
 from django.core.exceptions import ValidationError
 from decimal import Decimal
-
-from django.core.mail import send_mail
-
 from account.models import QuizAccess
 from django.http import HttpResponseForbidden
 
+from django.core.mail import send_mail
+from django.http import HttpResponse
+
+from django.conf import settings
 
 
 # Create your views here.
@@ -51,6 +49,78 @@ def quiz_details(request, id):
         'quiz' : quiz
     }
     return render(request, 'quiz-details.html', context)
+
+
+def appointment_request(request):
+    if request.method == "POST":
+        # Get form data
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        inspection_date = request.POST.get("number")
+        subject = request.POST.get("subject")
+        
+        # Email content
+        message = f"""
+        New appointment request:
+
+        Name: {name}
+        Email: {email}
+        Inspection Date: {inspection_date}
+        Subject: {subject}
+        """
+        
+        send_mail(
+            subject=f"Appointment Request: {subject}",
+            message=message,
+            from_email=settings.EMAIL_HOST_USER,  # From address
+            recipient_list=["londonseru@gmail.com"],  # To address
+            fail_silently=False,
+        )
+        
+        messages.success(request, "Your appointment request has been sent successfully!")
+        return redirect("core:index") 
+    else:
+        return redirect("core:index")
+
+def send_contact_email(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        phone_number = request.POST.get("number")
+        message_content = request.POST.get("message")
+        
+        # Create the message body
+        message_body = f"""
+        New contact form submission:
+
+        Name: {name}
+        Email: {email}
+        Subject: {subject}
+        Phone Number: {phone_number}
+        Message: {message_content}
+        """
+        
+        # Send the email
+        try:
+            send_mail(
+                subject=f"Contact Form: {subject}",
+                message=message_body,
+                from_email=settings.EMAIL_HOST_USER,  
+                recipient_list=["londonseru@gmail.com"],
+                fail_silently=False,
+            )
+            # Send a success message to the user
+            messages.success(request, "Your message has been sent successfully!")
+            return redirect("core:contact")  
+
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+            return redirect("core:contact") 
+    else:
+        return redirect("core:contact") 
+
+
 
 def policy(request):
     return render(request, 'policy.html')
