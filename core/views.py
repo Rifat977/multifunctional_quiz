@@ -149,7 +149,6 @@ def contact(request):
 @login_required
 def home(request):
     user = request.user
-    # user_course = request.user.course
 
     accessible_quizzes = QuizAccess.objects.filter(user=user, is_active=True).values_list('question_pattern', flat=True)
     f_quizzes = QuestionPattern.objects.filter(id__in=accessible_quizzes)
