@@ -181,7 +181,12 @@
             {% for quiz in quizzes %}
             <div class="col-md-6 col-xl-4 filter-item {{quiz.subject.course.id}}">
                 <div class="course-box2">
-                    <div class="course-img"><img src="{{quiz.image.url}}" alt="course"> 
+                    <div class="course-img">
+                        
+                        {% if quiz.image %}
+                        <img src="{{quiz.image.url}}" alt="course"> 
+                        {% endif %}
+
                         {% if quiz.tier == "easy" %}
                             <span class="tag bg-success">{{quiz.tier|title}}</span>
                         {% elif quiz.tier == "medium" %}
