@@ -6,6 +6,7 @@ from course.models import Course
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.conf import settings
+from time import timezone
 
 from course.models import QuestionPattern
 

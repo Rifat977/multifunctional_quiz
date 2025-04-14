@@ -158,5 +158,5 @@ EMAIL_PORT = 587  # Use 587 with TLS
 EMAIL_USE_TLS = True  # Enable TLS (STARTTLS)
 EMAIL_USE_SSL = False  # Disable SSL, as TLS is sufficient on port 587
 EMAIL_HOST_USER = 'itscrifat5147@gmail.com'
-EMAIL_HOST_PASSWORD = ''  # Make sure this is an app-specific password if 2FA is enabled
+EMAIL_HOST_PASSWORD = 'ttqf jrtn ponr samm'
 DEFAULT_FROM_EMAIL = 'itscrifat5147@gmail.com'

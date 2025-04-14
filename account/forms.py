@@ -12,7 +12,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'gender']
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'gender', 'phone_number']
         error_messages = {
             'username': {
                 'required': _('Username field is required.'),
