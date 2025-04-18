@@ -10,9 +10,9 @@ SECRET_KEY = 'django-insecure-&=ok5auj%o&+@*i43$9mr4m52i%4oocz(00w_%t_=dvuhb$#9)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['londonseru.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['londonseru.com', 'londonseru.co.uk' '127.0.0.1', 'localhost']
 
-CSRF_TRUSTED_ORIGINS = ['https://londonseru.com', 'http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['https://londonseru.com', 'https://londonseru.co.uk/', 'http://127.0.0.1:8000']
 
 
 AUTH_USER_MODEL = 'account.CustomUser'
