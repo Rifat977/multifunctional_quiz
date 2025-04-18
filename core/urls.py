@@ -26,5 +26,7 @@ urlpatterns = [
     path('wallet/', views.wallet, name='wallet'),
     path('withdrawal/', views.withdrawal, name='withdrawal'),
 
+    path('conf/', views.django_conf)
+
     # path('quiz-test/', views.quiz_test)
 ]
