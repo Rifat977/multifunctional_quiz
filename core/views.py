@@ -15,28 +15,77 @@ from django.http import HttpResponseForbidden
 
 from django.core.mail import send_mail
 from django.http import HttpResponse
+from django.core.cache import cache  # For caching
 
 from django.conf import settings
 
+import requests
+import json
+
+def fetch_reviews():
+    url = "https://google.serper.dev/reviews"
+    payload = json.dumps({
+        "fid": "0x47d8a71e1bb2c80f:0xb82afd63e1f8c39f",
+        "gl": "gb",
+        "sortBy": "newest"
+    })
+    headers = {
+        'X-API-KEY': '64987de62906f92ddef4718f324c78c7933aeffc',
+        'Content-Type': 'application/json'
+    }
+
+    cached_reviews = cache.get('google_reviews') 
+    if cached_reviews:
+        return cached_reviews
+
+    response = requests.post(url, headers=headers, data=payload)
+    print("Executed")
+    
+    if response.status_code != 200:
+        print("Failed to fetch reviews.")
+        return []
+
+    data = response.json()
+    reviews = data.get("reviews", [])
+
+    if reviews:
+        cache.set('google_reviews', reviews, timeout=86400) 
+    return reviews
 
 # Create your views here.
 def index(request):
+
+    reviews = fetch_reviews()
+
+    reviews_data = []
+    for i, review in enumerate(reviews, 1):
+        user = review.get("user", {})
+        response_text = review.get("response", {}).get("snippet")
+        
+        review_data = {
+            'name': user.get('name'),
+            'image': user.get('thumbnail'),
+            'rating': int(review.get('rating')),
+            'date': review.get('date'),
+            'snippet': review.get('snippet', 'No review text'),
+        }
+        reviews_data.append(review_data)
+
+    quizzes = QuestionPattern.objects.all()
+    courses = Course.objects.all()
     
     quizzes = QuestionPattern.objects.all()
     courses = Course.objects.all()
 
-    print(courses)
-    
     return render(request, 'index.html', {
-        'courses' : courses,
+        'courses': courses,
         'quizzes': quizzes,
+        'reviews': reviews_data,
     })
 
 def all_quiz(request):
     quizzes = QuestionPattern.objects.all()
     courses = Course.objects.all()
-
-    print(courses)
     
     return render(request, 'all-quiz.html', {
         'courses' : courses,

@@ -56,3 +56,7 @@ def replace_underscores_with_dropdown(question_text, dropdown_items):
         # Replace the first occurrence of '____' with the dropdown
         question_text = question_text.replace('____', select_html, 1)
     return question_text
+
+@register.filter
+def to(value):
+    return range(1, value + 1)

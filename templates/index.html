@@ -1,6 +1,7 @@
 {% extends 'partials/base.html' %}
 
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}Home{% endblock %}
 
@@ -281,9 +282,15 @@
   </div>
   <div class="container-fluid">
       <div class="row slider-shadow th-carousel testi-slider-4 dot-style2" data-slide-show="4" data-ml-slide-show="3" data-lg-slide-show="2" data-md-slide-show="1" data-dots="true">
+        {% for review in reviews %}
           <div class="col-lg-6">
               <div class="testi-box style3">
-                  <div class="testi-box_review"><i class="fa-solid fa-star-sharp"></i> <i class="fa-solid fa-star-sharp"></i> <i class="fa-solid fa-star-sharp"></i> <i class="fa-solid fa-star-sharp"></i> <i class="fa-solid fa-star-sharp"></i> (5)</div>
+                <div class="testi-box_review">
+                    {% for i in review.rating|to %}
+                        <i class="fa-solid fa-star-sharp"></i>
+                    {% endfor %}
+                    ({{ review.rating }})
+                </div>               
                   <div class="testi-box-bg-shape">
                       <svg width="78" height="111" viewBox="0 0 78 111" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M0 0L78 30V71C78 93.0914 60.0914 111 38 111H10C4.47715 111 0 106.523 0 101V0Z" fill="#0D5EF4"/>
@@ -291,19 +298,20 @@
                   </div>
                   <div class="testi-box_content">
                       <p class="testi-box_text">
-                        Excellent SERU training center in London! Their website is user-friendly, and the training really helped me pass my SERU test with ease. Highly recommend their services to anyone preparing for the test—I'll definitely be recommending them to my friends.
+                        {{ review.snippet }}
                       </p>
                   </div>
                   <div class="testi-box_bottom">
-                      <div class="testi-box_img"><img src="https://lh3.googleusercontent.com/a-/ALV-UjXtD4NmVm-J8Ad60vaOknFBjkAZazzpCeyeTN6t3xLmN-PcZGw=w36-h36-p-rp-mo-br100" alt="Avater"></div>
+                      <div class="testi-box_img"><img class="img-fluid" src="{{ review.image }}" alt="Avater"></div>
                       <div class="testi-box-author-details">
-                          <h3 class="testi-box_name">Md Ali Jinnah</h3>
+                          <h3 class="testi-box_name">{{ review.name }}</h3>
                           <!-- <span class="testi-box_desig">IT Student</span> -->
                       </div>
                       <div class="testi-box_quote"><img src="{% static 'assets/img/icon/testi-quote2.svg' %}" alt="quote"></div>
                   </div>
               </div>
           </div>
+        {% endfor %}
       </div>
   </div>
 </section>
